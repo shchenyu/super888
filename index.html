@@ -147,9 +147,7 @@
     </div>
 
     <script>
-        // 🚀 ชี้ไปที่ Worker ของคุณ เพื่อให้ Worker ทะลวงบล็อกให้
-        const PROXY_BASE = 'https://livesportproxy.shchenyu8810.workers.dev/';
-
+        // แก้ไขลิงก์ช่อง โลโก้ และชื่อช่องตามที่คุณต้องการได้ตรงนี้เลยครับ
         const channels = [
             { id: 'epl1', name: 'EPL 1', url: 'https://www.livedoomovies.com:4431/02_epl1_720p/playlist.m3u8', type: 'FHD', logo: '' },
             { id: 'epl2', name: 'EPL 2', url: 'https://www.livedoomovies.com:4431/02_epl2_720p/playlist.m3u8', type: 'FHD', logo: '' },
@@ -220,34 +218,22 @@
             video.removeAttribute('src');
             video.load();
 
-            // 🛡️ หากเป็นลิงก์ที่มาจาก workers.dev ให้ดึงตรงๆ แต่ถ้าเป็นเว็บอื่น ให้ผ่าน Proxy
-            const isWorkerUrl = url.includes('workers.dev');
-            const targetUrl = isWorkerUrl ? url : PROXY_BASE + url;
-
             if (Hls.isSupported()) {
+                // รันตรงแบบไม่มี Proxy เจือปน
                 const currentHls = new Hls({
                     enableWorker: true,
                     lowLatencyMode: false,
                     backBufferLength: 90,
                     maxBufferLength: 60,
                     maxMaxBufferLength: 600, 
-                    liveSyncDurationCount: 6,
-                    // 🛡️ บังคับให้โหลดไฟล์ย่อยๆ ผ่าน Proxy ด้วย
-                    xhrSetup: function(xhr, u) {
-                        let finalUrl = u;
-                        if (u.startsWith('http') && !u.includes('/proxy/')) {
-                            if (!u.includes('workers.dev')) {
-                                finalUrl = PROXY_BASE + u;
-                            }
-                        }
-                        xhr.open('GET', finalUrl, true);
-                    }
+                    liveSyncDurationCount: 6
                 });
                 
                 hls = currentHls;
                 currentHls.networkRetryCount = 0;
 
-                currentHls.loadSource(targetUrl);
+                // โหลด URL ปลายทางตรงๆ ทันที
+                currentHls.loadSource(url);
                 currentHls.attachMedia(video);
 
                 currentHls.on(Hls.Events.MANIFEST_PARSED, function () {
@@ -268,7 +254,7 @@
                                     }, 1000);
                                 } else {
                                     currentHls.destroy();
-                                    showError('เป้าหมายบล็อกการดึงข้อมูล หรือสตรีมออฟไลน์');
+                                    showError('ต้นทางบล็อกการดึงข้อมูล หรือสตรีมออฟไลน์');
                                     loader.classList.add('hidden');
                                 }
                                 break;
@@ -288,7 +274,8 @@
                 });
 
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = targetUrl;
+                // สำหรับ Safari รันตรง
+                video.src = url;
                 video.onloadedmetadata = function () {
                     player.play().catch(e => {
                         player.muted = true;
