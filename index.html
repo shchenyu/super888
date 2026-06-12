@@ -141,8 +141,8 @@
     </div>
 
     <script>
-        // 🔥 อัปเดตลิงก์ PROXY ใหม่ของคุณแล้ว (ต้องมีคำว่า /proxy/ ต่อท้ายด้วยนะครับ!)
-        const PROXY_BASE = 'https://livesportproxy.shchenyu8810.workers.dev/proxy/';
+        // 🔥 นี่คือหัวใจสำคัญ: ชี้ไปที่ Worker ตัวใหม่พร้อมสแลชปิดท้าย
+        const PROXY_BASE = 'https://livesportproxy.shchenyu8810.workers.dev/';
 
         const channels = [
             { id: 'epl1', name: 'EPL 1', url: 'https://www.livedoomovies.com:4431/02_epl1_720p/playlist.m3u8', type: 'FHD', logo: '' },
@@ -226,9 +226,9 @@
                     maxMaxBufferLength: 600, 
                     liveSyncDurationCount: 6,
                     
+                    // ดักจับทุกลิงก์ย่อยให้วิ่งเข้า Worker ตัวใหม่แบบตรงๆ ไม่ต้องมี /proxy/
                     xhrSetup: function(xhr, u) {
                         let finalUrl = u;
-                        // เปลี่ยนการตรวจโดเมนให้ตรงกับ Proxy ตัวใหม่ของคุณ
                         if (u.startsWith('http') && !u.includes('livesportproxy.shchenyu8810.workers.dev')) {
                             finalUrl = PROXY_BASE + u;
                         }
