@@ -3,10 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    
-    <meta name="referrer" content="no-referrer">
-    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
-    
     <title>Premium Sports</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,231 +21,99 @@
             --primary-glow: rgba(0, 255, 136, 0.4);
             --text-main: #ffffff;
             --text-muted: #888890;
-            
             --plyr-color-main: var(--primary);
             --plyr-video-control-background-hover: rgba(0, 255, 136, 0.2);
             --plyr-menu-background: var(--bg-card);
             --plyr-menu-color: var(--text-main);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Kanit', 'Poppins', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Kanit', 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
 
         html, body {
-            width: 100vw;
-            height: 100vh;
-            height: 100dvh;
-            overflow: hidden !important; 
-            touch-action: none;
-            background-color: #000; 
-            color: var(--text-main);
-            display: flex;
-            justify-content: center;
+            width: 100vw; height: 100vh; height: 100dvh; overflow: hidden !important; 
+            touch-action: none; background-color: #000; color: var(--text-main);
+            display: flex; justify-content: center;
         }
 
         #app-container {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            max-width: 900px; 
-            height: 100%;
-            background-color: var(--bg-dark);
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column; width: 100%; max-width: 900px; 
+            height: 100%; background-color: var(--bg-dark); box-shadow: 0 0 50px rgba(0,0,0,0.5);
         }
 
         .player-wrapper {
-            width: 100%;
-            flex-shrink: 0;
-            max-height: 60vh; 
-            aspect-ratio: 16/9;
-            background: #000;
-            position: relative;
-            z-index: 50;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 100%; flex-shrink: 0; max-height: 60vh; aspect-ratio: 16/9;
+            background: #000; position: relative; z-index: 50; display: flex;
+            align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         
-        .plyr {
-            width: 100%;
-            height: 100%;
-            max-height: 60vh;
-        }
-        .plyr__video-wrapper {
-            height: 100%;
-            background: #000;
-        }
-        
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: contain; 
-            background: #000;
-        }
+        .plyr { width: 100%; height: 100%; max-height: 60vh; }
+        .plyr__video-wrapper { height: 100%; background: #000; }
+        video { width: 100%; height: 100%; object-fit: contain; background: #000; }
 
         .loader-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(8px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 99; 
-            transition: opacity 0.3s ease;
-            gap: 20px;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 99; transition: opacity 0.3s ease; gap: 20px;
         }
-        .loader-overlay.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
+        .loader-overlay.hidden { opacity: 0; pointer-events: none; }
         
         .spinner {
-            width: 45px; height: 45px;
-            border: 3px solid rgba(255,255,255,0.05);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+            width: 45px; height: 45px; border: 3px solid rgba(255,255,255,0.05);
+            border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        .status-text {
-            color: var(--primary);
-            font-size: 13px;
-            letter-spacing: 1.5px;
-            font-weight: 500;
-            text-transform: uppercase;
-        }
+        .status-text { color: var(--primary); font-size: 13px; letter-spacing: 1.5px; font-weight: 500; text-transform: uppercase; }
 
         .content {
-            flex: 1; 
-            overflow-y: auto; 
-            -webkit-overflow-scrolling: touch;
-            touch-action: pan-y;
-            padding: 20px;
-            padding-bottom: env(safe-area-inset-bottom, 30px);
+            flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; touch-action: pan-y;
+            padding: 20px; padding-bottom: env(safe-area-inset-bottom, 30px);
         }
 
         .content::-webkit-scrollbar { width: 6px; }
-        .content::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-        }
+        .content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
         
         .section-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--text-muted);
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            border-left: 3px solid var(--primary);
-            padding-left: 10px;
+            font-size: 18px; font-weight: 600; color: var(--text-muted); margin-bottom: 20px;
+            text-transform: uppercase; letter-spacing: 1.5px; border-left: 3px solid var(--primary); padding-left: 10px;
         }
 
-        .channel-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-            gap: 15px;
-        }
-
-        @media (min-width: 600px) {
-            .channel-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
-        }
+        .channel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 15px; }
+        @media (min-width: 600px) { .channel-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); } }
 
         .channel-card {
-            background: var(--bg-card);
-            border: 1px solid rgba(255,255,255,0.03);
-            border-radius: 12px;
-            padding: 20px 10px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
+            background: var(--bg-card); border: 1px solid rgba(255,255,255,0.03); border-radius: 12px;
+            padding: 20px 10px; cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; overflow: hidden;
         }
         
-        .channel-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(255,255,255,0.1);
-            background: rgba(255,255,255,0.02);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
+        .channel-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.02); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
         .channel-card:active { transform: scale(0.97); }
-
-        .channel-card.active {
-            border-color: var(--primary);
-            background: linear-gradient(145deg, rgba(0,255,136,0.05) 0%, rgba(24,24,28,1) 100%);
-            box-shadow: 0 0 15px var(--primary-glow);
-        }
+        .channel-card.active { border-color: var(--primary); background: linear-gradient(145deg, rgba(0,255,136,0.05) 0%, rgba(24,24,28,1) 100%); box-shadow: 0 0 15px var(--primary-glow); }
 
         .ch-icon {
-            width: 55px; height: 55px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            margin-bottom: 15px;
-            border: 1px solid rgba(255,255,255,0.08);
-            transition: all 0.3s ease;
-            overflow: hidden; 
+            width: 55px; height: 55px; background: rgba(255,255,255,0.03); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; margin-bottom: 15px;
+            border: 1px solid rgba(255,255,255,0.08); transition: all 0.3s ease; overflow: hidden; 
         }
-        .channel-card.active .ch-icon {
-            border-color: var(--primary);
-            box-shadow: 0 0 15px var(--primary-glow);
-            transform: scale(1.05);
-        }
+        .channel-card.active .ch-icon { border-color: var(--primary); box-shadow: 0 0 15px var(--primary-glow); transform: scale(1.05); }
 
-        .ch-logo-img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain; 
-            background-color: transparent;
-            padding: 5px;
-        }
-
+        .ch-logo-img { width: 100%; height: 100%; object-fit: contain; background-color: transparent; padding: 5px; }
         .ch-icon-text { font-size: 22px; font-weight: 600; color: #fff; }
         .channel-card.active .ch-icon-text { color: var(--primary); }
 
-        .ch-name {
-            font-size: 14px;
-            font-weight: 500;
-            width: 100%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            color: var(--text-main);
-        }
-
+        .ch-name { font-size: 14px; font-weight: 500; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main); }
         .ch-type {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-top: 6px;
-            background: rgba(255,255,255,0.05);
-            padding: 3px 10px;
-            border-radius: 20px;
-            text-transform: uppercase;
+            font-size: 11px; color: var(--text-muted); margin-top: 6px; background: rgba(255,255,255,0.05);
+            padding: 3px 10px; border-radius: 20px; text-transform: uppercase;
         }
-        .channel-card.active .ch-type {
-            color: var(--primary);
-            background: rgba(0, 255, 136, 0.1);
-        }
+        .channel-card.active .ch-type { color: var(--primary); background: rgba(0, 255, 136, 0.1); }
 
         .error-toast {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px);
-            background: #ff3333; color: white;
-            padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 500;
-            box-shadow: 0 5px 15px rgba(255, 51, 51, 0.3);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: #ff3333; color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 500;
+            box-shadow: 0 5px 15px rgba(255, 51, 51, 0.3); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 1000; display: flex; align-items: center; gap: 8px;
         }
         .error-toast.show { transform: translateX(-50%) translateY(0); }
@@ -279,6 +143,9 @@
     </div>
 
     <script>
+        // 🚀 นี่คือตัวแปรเชื่อมต่อกับ Cloudflare Worker Proxy ของคุณ
+        const PROXY_BASE = 'https://livesportspremium.ahmed9qn223.workers.dev/proxy/';
+
         const channels = [
             { id: 'epl1', name: 'EPL 1', url: 'https://www.livedoomovies.com:4431/02_epl1_720p/playlist.m3u8', type: 'FHD', logo: '' },
             { id: 'epl2', name: 'EPL 2', url: 'https://www.livedoomovies.com:4431/02_epl2_720p/playlist.m3u8', type: 'FHD', logo: '' },
@@ -349,20 +216,35 @@
             video.removeAttribute('src');
             video.load();
 
+            const isWorkerUrl = url.includes('workers.dev');
+
             if (Hls.isSupported()) {
+                // ผูกสตรีมเข้ากับ Proxy ทันทีเพื่อกันจอดำ
+                const proxyTargetUrl = isWorkerUrl ? url : PROXY_BASE + url;
+
                 const currentHls = new Hls({
                     enableWorker: true,
                     lowLatencyMode: false,
                     backBufferLength: 90,
-                    maxBufferLength: 60, // 🛠️ ขยาย Buffer ให้ดึงเผื่อไว้เยอะขึ้น ลดอาการค้าง
+                    maxBufferLength: 60,
                     maxMaxBufferLength: 600, 
-                    liveSyncDurationCount: 6 // 🛠️ ยอมดีเลย์จาก Live เพิ่มนิดนึง เพื่อให้สตรีมเนียนขึ้น
+                    liveSyncDurationCount: 6,
+                    // ดักจับไฟล์วิดีโอย่อยๆ ให้วิ่งผ่าน Proxy ด้วย
+                    xhrSetup: function(xhr, u) {
+                        let finalUrl = u;
+                        if (u.startsWith('http') && !u.includes('/proxy/')) {
+                            if (!u.includes('workers.dev')) {
+                                finalUrl = PROXY_BASE + u;
+                            }
+                        }
+                        xhr.open('GET', finalUrl, true);
+                    }
                 });
                 
                 hls = currentHls;
                 currentHls.networkRetryCount = 0;
 
-                currentHls.loadSource(url);
+                currentHls.loadSource(proxyTargetUrl);
                 currentHls.attachMedia(video);
 
                 currentHls.on(Hls.Events.MANIFEST_PARSED, function () {
@@ -397,14 +279,13 @@
                                 break;
                         }
                     } else if (data.details === Hls.ErrorDetails.BUFFER_STALLED_ERROR) {
-                        // ดักจับจังหวะที่เน็ตโหลดไม่ทัน
                         loader.classList.remove('hidden');
                         statusText.innerText = 'กำลังโหลดบัฟเฟอร์...';
                     }
                 });
 
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = url;
+                video.src = isWorkerUrl ? url : PROXY_BASE + url;
                 video.onloadedmetadata = function () {
                     player.play().catch(e => {
                         player.muted = true;
@@ -431,7 +312,6 @@
             }, 4000);
         }
 
-        // --- 🛠️ BULLETPROOF LOADER LOGIC ---
         const hideLoader = () => loader.classList.add('hidden');
         
         video.addEventListener('waiting', () => {
@@ -446,8 +326,6 @@
         video.addEventListener('pause', hideLoader);
         video.addEventListener('error', hideLoader);
 
-        // ท่าไม้ตาย: เช็คสถานะความพร้อมของวิดีโอ (readyState) ทุกๆ 0.5 วินาที
-        // readyState >= 3 หมายถึง มีข้อมูลวิดีโอพร้อมเล่นเฟรมปัจจุบันและเฟรมถัดไปแล้ว
         setInterval(() => {
             if (!video.paused && video.readyState >= 3 && !loader.classList.contains('hidden')) {
                 hideLoader();
