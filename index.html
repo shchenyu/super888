@@ -25,10 +25,20 @@
             --primary-glow: rgba(0, 255, 136, 0.4);
             --text-main: #ffffff;
             --text-muted: #888890;
+            
+            /* =========================================
+               ปรับแต่งสีของแถบวิดีโอ (Plyr Customization)
+               ========================================= */
             --plyr-color-main: var(--primary);
-            --plyr-video-control-background-hover: rgba(0, 255, 136, 0.2);
+            --plyr-video-control-color: #ffffff;
+            --plyr-video-control-color-hover: var(--primary);
+            --plyr-video-control-background-hover: transparent;
             --plyr-menu-background: var(--bg-card);
             --plyr-menu-color: var(--text-main);
+            --plyr-range-thumb-background: var(--primary);
+            --plyr-range-track-background: rgba(255,255,255,0.2);
+            --plyr-tooltip-background: var(--bg-card);
+            --plyr-tooltip-color: #ffffff;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Kanit', 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -50,8 +60,28 @@
             align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         
+        /* ทำให้แถบควบคุมด้านล่างโปร่งแสงแบบ Cinematic */
+        .plyr--video .plyr__controls {
+            background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.9)) !important;
+            padding: 30px 15px 15px 15px !important;
+        }
+
+        /* ปรับปุ่ม Play ตรงกลางให้เป็นสีเขียวเรืองแสง */
+        .plyr__control--overlaid {
+            background: rgba(0, 255, 136, 0.8) !important;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5) !important;
+            transition: all 0.3s ease !important;
+        }
+        .plyr__control--overlaid:hover {
+            background: var(--primary) !important;
+            transform: scale(1.1) !important;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.8) !important;
+        }
+
         .plyr { width: 100%; height: 100%; max-height: 60vh; }
         .plyr__video-wrapper { height: 100%; background: #000; }
+        
+        /* สังเกตว่าเราเอาคำว่า controls ออกแล้ว */
         video { width: 100%; height: 100%; object-fit: contain; background: #000; }
 
         .loader-overlay {
@@ -147,7 +177,6 @@
     </div>
 
     <script>
-        // แก้ไขลิงก์ช่อง โลโก้ และชื่อช่องตามที่คุณต้องการได้ตรงนี้เลยครับ
         const channels = [
             { id: 'epl1', name: 'EPL 1', url: 'https://www.livedoomovies.com:4431/02_epl1_720p/playlist.m3u8', type: 'FHD', logo: '' },
             { id: 'epl2', name: 'EPL 2', url: 'https://www.livedoomovies.com:4431/02_epl2_720p/playlist.m3u8', type: 'FHD', logo: '' },
@@ -164,8 +193,9 @@
         const errorToast = document.getElementById('error-toast');
         let errorTimeout;
 
+        // กำหนดปุ่มที่จะให้แสดงบนแถบ Plyr
         const player = new Plyr(video, {
-            controls: ['play-large', 'play', 'mute', 'volume', 'fullscreen'], 
+            controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'], 
             autoplay: true,
             muted: true,
             ratio: '16:9'
@@ -219,7 +249,6 @@
             video.load();
 
             if (Hls.isSupported()) {
-                // รันตรงแบบไม่มี Proxy เจือปน
                 const currentHls = new Hls({
                     enableWorker: true,
                     lowLatencyMode: false,
@@ -232,7 +261,6 @@
                 hls = currentHls;
                 currentHls.networkRetryCount = 0;
 
-                // โหลด URL ปลายทางตรงๆ ทันที
                 currentHls.loadSource(url);
                 currentHls.attachMedia(video);
 
@@ -274,7 +302,6 @@
                 });
 
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                // สำหรับ Safari รันตรง
                 video.src = url;
                 video.onloadedmetadata = function () {
                     player.play().catch(e => {
