@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <meta name="referrer" content="no-referrer">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    
     <title>Premium Sports</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -143,7 +147,7 @@
     </div>
 
     <script>
-        // 🚀 นี่คือตัวแปรเชื่อมต่อกับ Cloudflare Worker Proxy ของคุณ
+        // 🚀 ชี้ไปที่ Worker ของคุณ เพื่อให้ Worker ทะลวงบล็อกให้
         const PROXY_BASE = 'https://livesportspremium.ahmed9qn223.workers.dev/proxy/';
 
         const channels = [
@@ -216,12 +220,11 @@
             video.removeAttribute('src');
             video.load();
 
+            // 🛡️ หากเป็นลิงก์ที่มาจาก workers.dev ให้ดึงตรงๆ แต่ถ้าเป็นเว็บอื่น ให้ผ่าน Proxy
             const isWorkerUrl = url.includes('workers.dev');
+            const targetUrl = isWorkerUrl ? url : PROXY_BASE + url;
 
             if (Hls.isSupported()) {
-                // ผูกสตรีมเข้ากับ Proxy ทันทีเพื่อกันจอดำ
-                const proxyTargetUrl = isWorkerUrl ? url : PROXY_BASE + url;
-
                 const currentHls = new Hls({
                     enableWorker: true,
                     lowLatencyMode: false,
@@ -229,7 +232,7 @@
                     maxBufferLength: 60,
                     maxMaxBufferLength: 600, 
                     liveSyncDurationCount: 6,
-                    // ดักจับไฟล์วิดีโอย่อยๆ ให้วิ่งผ่าน Proxy ด้วย
+                    // 🛡️ บังคับให้โหลดไฟล์ย่อยๆ ผ่าน Proxy ด้วย
                     xhrSetup: function(xhr, u) {
                         let finalUrl = u;
                         if (u.startsWith('http') && !u.includes('/proxy/')) {
@@ -244,7 +247,7 @@
                 hls = currentHls;
                 currentHls.networkRetryCount = 0;
 
-                currentHls.loadSource(proxyTargetUrl);
+                currentHls.loadSource(targetUrl);
                 currentHls.attachMedia(video);
 
                 currentHls.on(Hls.Events.MANIFEST_PARSED, function () {
@@ -285,7 +288,7 @@
                 });
 
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = isWorkerUrl ? url : PROXY_BASE + url;
+                video.src = targetUrl;
                 video.onloadedmetadata = function () {
                     player.play().catch(e => {
                         player.muted = true;
