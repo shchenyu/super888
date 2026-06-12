@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
     <meta name="referrer" content="no-referrer">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     
-    <title>Premium Sports (Static Version)</title>
+    <title>Premium Sports</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -102,7 +103,7 @@
             align-items: center;
             justify-content: center;
             z-index: 99; 
-            transition: opacity 0.4s ease;
+            transition: opacity 0.3s ease;
             gap: 20px;
         }
         .loader-overlay.hidden {
@@ -260,7 +261,7 @@
         <div class="player-wrapper">
             <div class="loader-overlay" id="loader">
                 <div class="spinner"></div>
-                <div class="status-text" id="status-text">กำลังโหลดบัฟเฟอร์...</div>
+                <div class="status-text" id="status-text">กำลังเชื่อมต่อสัญญาณ...</div>
             </div>
             <video id="video-player" playsinline autoplay muted></video>
         </div>
@@ -338,41 +339,36 @@
             if(activeCard) activeCard.classList.add('active');
 
             loader.classList.remove('hidden');
-            statusText.innerText = 'กำลังโหลดบัฟเฟอร์...';
+            statusText.innerText = 'กำลังเชื่อมต่อสัญญาณ...';
 
             if (hls) {
                 hls.destroy();
                 hls = null;
             }
             video.pause();
+            video.removeAttribute('src');
+            video.load();
 
             if (Hls.isSupported()) {
                 const currentHls = new Hls({
                     enableWorker: true,
                     lowLatencyMode: false,
                     backBufferLength: 90,
-                    maxBufferLength: 30, 
+                    maxBufferLength: 60, // 🛠️ ขยาย Buffer ให้ดึงเผื่อไว้เยอะขึ้น ลดอาการค้าง
                     maxMaxBufferLength: 600, 
-                    liveSyncDurationCount: 3, 
-                    xhrSetup: function(xhr, u) {
-                        // ❌ ไม่สามารถใส่ xhr.setRequestHeader('Referer', '...') ตรงนี้ได้
-                        // เพราะเบราว์เซอร์จะบล็อก Forbidden Header ทันที
-                        xhr.open('GET', u, true);
-                    }
+                    liveSyncDurationCount: 6 // 🛠️ ยอมดีเลย์จาก Live เพิ่มนิดนึง เพื่อให้สตรีมเนียนขึ้น
                 });
                 
                 hls = currentHls;
                 currentHls.networkRetryCount = 0;
 
-                // ดึงสตรีมตรงๆ (Direct Play) ไม่ผ่าน Proxy
                 currentHls.loadSource(url);
                 currentHls.attachMedia(video);
 
                 currentHls.on(Hls.Events.MANIFEST_PARSED, function () {
                     player.play().catch(e => {
-                        console.log('Autoplay prevented:', e);
                         player.muted = true;
-                        player.play().catch(err => console.error("Playback failed", err));
+                        player.play();
                     });
                 });
 
@@ -387,8 +383,7 @@
                                     }, 1000);
                                 } else {
                                     currentHls.destroy();
-                                    // หากขึ้น Error นี้บน GitHub Pages มีโอกาสสูงที่เป้าหมายบล็อก CORS หรือเช็ค Referer
-                                    showError('เป้าหมายบล็อกการดึงข้อมูล (CORS / Referer) หรือสตรีมออฟไลน์');
+                                    showError('เป้าหมายบล็อกการดึงข้อมูล หรือสตรีมออฟไลน์');
                                     loader.classList.add('hidden');
                                 }
                                 break;
@@ -401,6 +396,10 @@
                                 loader.classList.add('hidden');
                                 break;
                         }
+                    } else if (data.details === Hls.ErrorDetails.BUFFER_STALLED_ERROR) {
+                        // ดักจับจังหวะที่เน็ตโหลดไม่ทัน
+                        loader.classList.remove('hidden');
+                        statusText.innerText = 'กำลังโหลดบัฟเฟอร์...';
                     }
                 });
 
@@ -432,6 +431,7 @@
             }, 4000);
         }
 
+        // --- 🛠️ BULLETPROOF LOADER LOGIC ---
         const hideLoader = () => loader.classList.add('hidden');
         
         video.addEventListener('waiting', () => {
@@ -443,9 +443,16 @@
         
         video.addEventListener('playing', hideLoader);
         video.addEventListener('canplay', hideLoader);
-        video.addEventListener('loadeddata', hideLoader);
         video.addEventListener('pause', hideLoader);
         video.addEventListener('error', hideLoader);
+
+        // ท่าไม้ตาย: เช็คสถานะความพร้อมของวิดีโอ (readyState) ทุกๆ 0.5 วินาที
+        // readyState >= 3 หมายถึง มีข้อมูลวิดีโอพร้อมเล่นเฟรมปัจจุบันและเฟรมถัดไปแล้ว
+        setInterval(() => {
+            if (!video.paused && video.readyState >= 3 && !loader.classList.contains('hidden')) {
+                hideLoader();
+            }
+        }, 500);
 
         document.addEventListener('DOMContentLoaded', renderChannels);
 
