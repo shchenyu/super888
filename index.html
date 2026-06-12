@@ -26,128 +26,230 @@
             --text-main: #ffffff;
             --text-muted: #888890;
             
-            /* =========================================
-               ปรับแต่งสีของแถบวิดีโอ (Plyr Customization)
-               ========================================= */
             --plyr-color-main: var(--primary);
-            --plyr-video-control-color: #ffffff;
-            --plyr-video-control-color-hover: var(--primary);
-            --plyr-video-control-background-hover: transparent;
+            --plyr-video-control-background-hover: rgba(0, 255, 136, 0.2);
             --plyr-menu-background: var(--bg-card);
             --plyr-menu-color: var(--text-main);
-            --plyr-range-thumb-background: var(--primary);
-            --plyr-range-track-background: rgba(255,255,255,0.2);
-            --plyr-tooltip-background: var(--bg-card);
-            --plyr-tooltip-color: #ffffff;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Kanit', 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Kanit', 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
 
         html, body {
-            width: 100vw; height: 100vh; height: 100dvh; overflow: hidden !important; 
-            touch-action: none; background-color: #000; color: var(--text-main);
-            display: flex; justify-content: center;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden !important; 
+            touch-action: none;
+            background-color: #000; 
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
         }
 
         #app-container {
-            display: flex; flex-direction: column; width: 100%; max-width: 900px; 
-            height: 100%; background-color: var(--bg-dark); box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 900px; 
+            height: 100%;
+            background-color: var(--bg-dark);
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
         }
 
         .player-wrapper {
-            width: 100%; flex-shrink: 0; max-height: 60vh; aspect-ratio: 16/9;
-            background: #000; position: relative; z-index: 50; display: flex;
-            align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 100%;
+            flex-shrink: 0;
+            max-height: 60vh; 
+            aspect-ratio: 16/9;
+            background: #000;
+            position: relative;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         
-        /* ทำให้แถบควบคุมด้านล่างโปร่งแสงแบบ Cinematic */
-        .plyr--video .plyr__controls {
-            background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.9)) !important;
-            padding: 30px 15px 15px 15px !important;
+        .plyr {
+            width: 100%;
+            height: 100%;
+            max-height: 60vh;
         }
-
-        /* ปรับปุ่ม Play ตรงกลางให้เป็นสีเขียวเรืองแสง */
-        .plyr__control--overlaid {
-            background: rgba(0, 255, 136, 0.8) !important;
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5) !important;
-            transition: all 0.3s ease !important;
+        .plyr__video-wrapper {
+            height: 100%;
+            background: #000;
         }
-        .plyr__control--overlaid:hover {
-            background: var(--primary) !important;
-            transform: scale(1.1) !important;
-            box-shadow: 0 0 30px rgba(0, 255, 136, 0.8) !important;
-        }
-
-        .plyr { width: 100%; height: 100%; max-height: 60vh; }
-        .plyr__video-wrapper { height: 100%; background: #000; }
         
-        /* สังเกตว่าเราเอาคำว่า controls ออกแล้ว */
-        video { width: 100%; height: 100%; object-fit: contain; background: #000; }
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; 
+            background: #000;
+        }
 
         .loader-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 99; transition: opacity 0.3s ease; gap: 20px;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 99; /* ยกให้อยู่บนสุดเสมอ */
+            transition: opacity 0.3s ease;
+            gap: 20px;
         }
-        .loader-overlay.hidden { opacity: 0; pointer-events: none; }
+        .loader-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
         
         .spinner {
-            width: 45px; height: 45px; border: 3px solid rgba(255,255,255,0.05);
-            border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite;
+            width: 45px; height: 45px;
+            border: 3px solid rgba(255,255,255,0.05);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        .status-text { color: var(--primary); font-size: 13px; letter-spacing: 1.5px; font-weight: 500; text-transform: uppercase; }
+        .status-text {
+            color: var(--primary);
+            font-size: 13px;
+            letter-spacing: 1.5px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
 
         .content {
-            flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; touch-action: pan-y;
-            padding: 20px; padding-bottom: env(safe-area-inset-bottom, 30px);
+            flex: 1; 
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-y;
+            padding: 20px;
+            padding-bottom: env(safe-area-inset-bottom, 30px);
         }
 
         .content::-webkit-scrollbar { width: 6px; }
-        .content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .content::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
         
         .section-title {
-            font-size: 18px; font-weight: 600; color: var(--text-muted); margin-bottom: 20px;
-            text-transform: uppercase; letter-spacing: 1.5px; border-left: 3px solid var(--primary); padding-left: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            border-left: 3px solid var(--primary);
+            padding-left: 10px;
         }
 
-        .channel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 15px; }
-        @media (min-width: 600px) { .channel-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); } }
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 15px;
+        }
+
+        @media (min-width: 600px) {
+            .channel-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+        }
 
         .channel-card {
-            background: var(--bg-card); border: 1px solid rgba(255,255,255,0.03); border-radius: 12px;
-            padding: 20px 10px; cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; overflow: hidden;
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 20px 10px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
         }
         
-        .channel-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.02); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .channel-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.02);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
         .channel-card:active { transform: scale(0.97); }
-        .channel-card.active { border-color: var(--primary); background: linear-gradient(145deg, rgba(0,255,136,0.05) 0%, rgba(24,24,28,1) 100%); box-shadow: 0 0 15px var(--primary-glow); }
+
+        .channel-card.active {
+            border-color: var(--primary);
+            background: linear-gradient(145deg, rgba(0,255,136,0.05) 0%, rgba(24,24,28,1) 100%);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
 
         .ch-icon {
-            width: 55px; height: 55px; background: rgba(255,255,255,0.03); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; margin-bottom: 15px;
-            border: 1px solid rgba(255,255,255,0.08); transition: all 0.3s ease; overflow: hidden; 
+            width: 55px; height: 55px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: all 0.3s ease;
+            overflow: hidden; 
         }
-        .channel-card.active .ch-icon { border-color: var(--primary); box-shadow: 0 0 15px var(--primary-glow); transform: scale(1.05); }
+        .channel-card.active .ch-icon {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+            transform: scale(1.05);
+        }
 
-        .ch-logo-img { width: 100%; height: 100%; object-fit: contain; background-color: transparent; padding: 5px; }
+        .ch-logo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; 
+            background-color: transparent;
+            padding: 5px;
+        }
+
         .ch-icon-text { font-size: 22px; font-weight: 600; color: #fff; }
         .channel-card.active .ch-icon-text { color: var(--primary); }
 
-        .ch-name { font-size: 14px; font-weight: 500; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main); }
-        .ch-type {
-            font-size: 11px; color: var(--text-muted); margin-top: 6px; background: rgba(255,255,255,0.05);
-            padding: 3px 10px; border-radius: 20px; text-transform: uppercase;
+        .ch-name {
+            font-size: 14px;
+            font-weight: 500;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--text-main);
         }
-        .channel-card.active .ch-type { color: var(--primary); background: rgba(0, 255, 136, 0.1); }
+
+        .ch-type {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 6px;
+            background: rgba(255,255,255,0.05);
+            padding: 3px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+        .channel-card.active .ch-type {
+            color: var(--primary);
+            background: rgba(0, 255, 136, 0.1);
+        }
 
         .error-toast {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px);
-            background: #ff3333; color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 500;
-            box-shadow: 0 5px 15px rgba(255, 51, 51, 0.3); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: #ff3333; color: white;
+            padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 500;
+            box-shadow: 0 5px 15px rgba(255, 51, 51, 0.3);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 1000; display: flex; align-items: center; gap: 8px;
         }
         .error-toast.show { transform: translateX(-50%) translateY(0); }
@@ -193,9 +295,9 @@
         const errorToast = document.getElementById('error-toast');
         let errorTimeout;
 
-        // กำหนดปุ่มที่จะให้แสดงบนแถบ Plyr
+        // --- ตั้งค่า Plyr ---
         const player = new Plyr(video, {
-            controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'], 
+            controls: ['play-large', 'play', 'mute', 'volume', 'fullscreen'], 
             autoplay: true,
             muted: true,
             ratio: '16:9'
@@ -240,34 +342,42 @@
             loader.classList.remove('hidden');
             statusText.innerText = 'กำลังเชื่อมต่อสัญญาณ...';
 
+            // 🛠️ BUG FIX: เคลียร์ Plyr state โดยสิ้นเชิง ป้องกัน "Play request was interrupted"
+            player.stop(); 
+
             if (hls) {
                 hls.destroy();
                 hls = null;
             }
             video.pause();
-            video.removeAttribute('src');
+            video.removeAttribute('src'); 
             video.load();
 
+            const isWorkerUrl = url.includes('workers.dev');
+
             if (Hls.isSupported()) {
+                const proxyTargetUrl = isWorkerUrl ? url : '/proxy/' + url;
+
                 const currentHls = new Hls({
                     enableWorker: true,
                     lowLatencyMode: false,
                     backBufferLength: 90,
-                    maxBufferLength: 60,
+                    maxBufferLength: 60, // 🛠️ จูน BUFFER ใหม่อีกครั้ง
                     maxMaxBufferLength: 600, 
-                    liveSyncDurationCount: 6
+                    liveSyncDurationCount: 6 // 🛠️ ปรับให้ซิงค์เผื่อ Buffer ไว้เยอะขึ้น
                 });
                 
                 hls = currentHls;
                 currentHls.networkRetryCount = 0;
 
-                currentHls.loadSource(url);
+                currentHls.loadSource(proxyTargetUrl);
                 currentHls.attachMedia(video);
 
                 currentHls.on(Hls.Events.MANIFEST_PARSED, function () {
                     player.play().catch(e => {
+                        console.log('Autoplay prevented:', e);
                         player.muted = true;
-                        player.play();
+                        player.play().catch(err => console.error("Playback failed", err));
                     });
                 });
 
@@ -282,8 +392,8 @@
                                     }, 1000);
                                 } else {
                                     currentHls.destroy();
-                                    showError('ต้นทางบล็อกการดึงข้อมูล หรือสตรีมออฟไลน์');
-                                    loader.classList.add('hidden');
+                                    showError('ช่องนี้ออฟไลน์ หรือมีปัญหาการเชื่อมต่อ');
+                                    loader.classList.add('hidden'); 
                                 }
                                 break;
                             case Hls.ErrorTypes.MEDIA_ERROR:
@@ -296,13 +406,14 @@
                                 break;
                         }
                     } else if (data.details === Hls.ErrorDetails.BUFFER_STALLED_ERROR) {
+                        // 🛠️ BUG FIX: ดักจับจังหวะที่ Buffering หมุน
                         loader.classList.remove('hidden');
-                        statusText.innerText = 'กำลังโหลดบัฟเฟอร์...';
+                        statusText.innerText = 'กำลังโหลดข้อมูล...';
                     }
                 });
 
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = url;
+                video.src = isWorkerUrl ? url : '/proxy/' + url;
                 video.onloadedmetadata = function () {
                     player.play().catch(e => {
                         player.muted = true;
@@ -329,25 +440,23 @@
             }, 4000);
         }
 
+        // 🛠️ BUG FIX: เปลี่ยนมาดักสถานะจาก Plyr Instance แทน video element โดยตรง
+        // ซึ่งให้ข้อมูลที่แม่นยำกว่ามากสำหรับซ่อน Loader
         const hideLoader = () => loader.classList.add('hidden');
         
-        video.addEventListener('waiting', () => {
+        player.on('waiting', () => {
+            // โชว์หมุนติ้วเฉพาะตอนที่วิดีโอไม่ได้โดนกดหยุดไว้
             if (!video.paused) {
                 statusText.innerText = 'กำลังโหลดข้อมูล...';
                 loader.classList.remove('hidden');
             }
         });
         
-        video.addEventListener('playing', hideLoader);
-        video.addEventListener('canplay', hideLoader);
-        video.addEventListener('pause', hideLoader);
-        video.addEventListener('error', hideLoader);
-
-        setInterval(() => {
-            if (!video.paused && video.readyState >= 3 && !loader.classList.contains('hidden')) {
-                hideLoader();
-            }
-        }, 500);
+        // ทันทีที่มีการเล่น, มีข้อมูลพร้อม หรือมีข้อผิดพลาด ให้ซ่อน Loader ทันที
+        player.on('playing', hideLoader);
+        player.on('canplay', hideLoader);
+        player.on('pause', hideLoader);
+        player.on('error', hideLoader);
 
         document.addEventListener('DOMContentLoaded', renderChannels);
 
