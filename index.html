@@ -119,7 +119,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
             width: 100%;
-            max-width: 90px; /* ปรับเพื่อไม่ให้ข้อความล้นกล่อง */
+            max-width: 90px;
         }
 
         .footer-credit {
@@ -142,7 +142,7 @@
             }
             .channel-name { 
                 font-size: 10px; 
-                max-width: 50px; /* ปรับให้พอดีกับภาพบนมือถือ */
+                max-width: 50px; 
             }
             .category-btn { padding: 8px 20px; font-size: 12px; }
         }
@@ -291,23 +291,23 @@
             <div class="channel-name">3bbSport</div>
         </div>
         
-        <div class="channel" data-category="sports" onclick="changeChannel('https://max01.mquanggiu290.workers.dev/chunks/max01_720.m3u8?token=' + generateToken('Max01'))">
+        <div class="channel" data-category="sports" onclick="changeChannel('https://max01.mquanggiu290.workers.dev/chunks/max01_720.m3u8')">
             <img src="https://placehold.co/100x100/333/FFF?text=MAX01" alt="Max01">
             <div class="channel-name">Max01</div>
         </div>
-        <div class="channel" data-category="sports" onclick="changeChannel('https://max02.mquanggiu290.workers.dev/chunks/max02_720.m3u8?token=' + generateToken('Max02'))">
+        <div class="channel" data-category="sports" onclick="changeChannel('https://max02.mquanggiu290.workers.dev/chunks/max02_720.m3u8')">
             <img src="https://placehold.co/100x100/333/FFF?text=MAX02" alt="Max02">
             <div class="channel-name">Max02</div>
         </div>
-        <div class="channel" data-category="sports" onclick="changeChannel('https://bein1.mquanggiu290.workers.dev/chunks/bein1_720.m3u8?token=' + generateToken('Bein1'))">
+        <div class="channel" data-category="sports" onclick="changeChannel('https://bein1.mquanggiu290.workers.dev/chunks/bein1_720.m3u8')">
             <img src="https://images.streamx-web.org/images/tv/png/epl-bein1.png" alt="BeIN 1">
             <div class="channel-name">BeIN 1</div>
         </div>
-        <div class="channel" data-category="sports" onclick="changeChannel('https://bein2.mquanggiu290.workers.dev/chunks/bein2_720.m3u8?token=' + generateToken('Bein2'))">
+        <div class="channel" data-category="sports" onclick="changeChannel('https://bein2.mquanggiu290.workers.dev/chunks/bein2_720.m3u8')">
             <img src="https://cms.dmpcdn.com/livetv/2023/07/24/5f346300-29cc-11ee-b2f4-e9de482d866e_webp_original.webp" alt="BeIN 2">
             <div class="channel-name">BeIN 2</div>
         </div>
-        <div class="channel" data-category="sports" onclick="changeChannel('https://bein3.mquanggiu290.workers.dev/chunks/bein3_720.m3u8?token=' + generateToken('Bein3'))">
+        <div class="channel" data-category="sports" onclick="changeChannel('https://bein3.mquanggiu290.workers.dev/chunks/bein3_720.m3u8')">
             <img src="https://cms.dmpcdn.com/livetv/2023/07/24/5fda18e0-29cc-11ee-846b-a1c4e5181c87_webp_original.webp" alt="BeIN 3">
             <div class="channel-name">BeIN 3</div>
         </div>
@@ -342,17 +342,9 @@
             filterCategory('tv');
         });
 
-        // ฟังก์ชันสร้าง Token รวมเป็นตัวเดียว ใช้หลักการส่งชื่อช่องเข้าไป
-        function generateToken(channelName) {
-            var salt = "AutoRandom" + channelName + "_Salt"; 
-            var currentHour = Math.floor(Date.now() / 3600000);
-            var rawToken = salt + "_" + currentHour;
-            return btoa(rawToken).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
-        }
-        
         var playerInstance = jwplayer("player");
 
-        // ถอดระบบแสดง Logo ทิ้ง เหลือแค่คำสั่งโหลดช่องและเล่นวิดีโอ
+        // ฟังก์ชันสำหรับสลับช่องและเล่นวิดีโอ
         function changeChannel(file, keyId, key) {
             var streamType = file.includes('.mpd') ? 'dash' : 'hls';
 
@@ -361,6 +353,7 @@
                 type: streamType
             };
 
+            // ตรวจสอบและใช้งาน DRM ถ้ามี KeyId และ Key
             if (keyId && key) {
                 sourceConfig.drm = {
                     clearkey: {
@@ -374,6 +367,7 @@
             playerInstance.play();
         }
 
+        // ตั้งค่าตัวเล่นวิดีโอตอนเริ่มต้น (Auto Load 5HD)
         playerInstance.setup({
             playlist: [{
                 sources: [
