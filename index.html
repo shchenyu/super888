@@ -83,7 +83,7 @@
         .channel {
             text-align: center;
             background-color: #1a1a1a;
-            padding: 2px;
+            padding: 10px 4px;
             border-radius: 10px;
             cursor: pointer;
             transition: transform 0.2s ease, background-color 0.2s ease;
@@ -111,15 +111,16 @@
             border-radius: 10px;
         }
 
-        .channel-name {
+.channel-name {
             color: #eee;
-            margin-top: 8px;
+            margin-top: 4px; /* 💡 ลดจาก 8px เป็น 4px (เพื่อให้ชื่อช่องขยับเข้าใกล้รูปโลโก้มากขึ้น) */
+            margin-bottom: 2px; /* 💡 เพิ่มระยะดันขอบล่างนิดหน่อย */
             font-size: 12px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             width: 100%;
-            max-width: 90px; /* ปรับเพื่อไม่ให้ข้อความล้นกล่อง */
+            max-width: 90px;
         }
 
         .footer-credit {
