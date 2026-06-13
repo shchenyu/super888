@@ -66,17 +66,17 @@
         .category-tabs {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 15px;
             margin-bottom: 20px;
             width: 100%;
             max-width: 800px;
         }
 
         .category-btn {
-            background-color: #222;
-            color: #aaa;
-            border: 1px solid #444;
-            padding: 8px 20px;
+            background-color: #1a1a1a;
+            color: #888;
+            border: 1px solid #333;
+            padding: 8px 25px;
             border-radius: 20px;
             cursor: pointer;
             font-size: 14px;
@@ -85,15 +85,16 @@
         }
 
         .category-btn:hover {
-            background-color: #333;
-            color: #fff;
+            background-color: #2a2a2a;
+            color: #ddd;
         }
 
+        /* สไตล์ปุ่มที่ถูกเลือก: เน้นแค่ขอบเรืองแสง ไม่มีพื้นหลังสีแดง */
         .category-btn.active {
-            background-color: #e50914; /* สีแดงสไตล์สปอร์ต/ทีวี */
+            background-color: #1a1a1a;
             color: #fff;
-            border-color: #e50914;
-            box-shadow: 0 0 10px rgba(229, 9, 20, 0.5);
+            border-color: #fff; /* ขอบสีขาว */
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.4); /* เอฟเฟกต์เรืองแสง */
         }
         /* ------------------------------------ */
 
@@ -127,7 +128,7 @@
 
         /* ซ่อนช่องเมื่อไม่ได้อยู่ในหมวดหมู่ที่เลือก */
         .channel.hidden {
-            display: none;
+            display: none !important;
         }
 
         .channel img {
@@ -168,6 +169,10 @@
             .channel-name {
                 font-size: 10px;
             }
+            .category-btn {
+                padding: 8px 20px;
+                font-size: 12px;
+            }
         }
     </style>
 </head>
@@ -181,8 +186,7 @@
     </div>
 
     <div class="category-tabs">
-        <button class="category-btn active" onclick="filterCategory('all')">ทั้งหมด</button>
-        <button class="category-btn" onclick="filterCategory('tv')">ช่องทีวี</button>
+        <button class="category-btn active" onclick="filterCategory('tv')">ช่องทีวี</button>
         <button class="category-btn" onclick="filterCategory('sports')">กีฬา</button>
     </div>
 
@@ -268,7 +272,6 @@
             <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/PPTV_2024e.jpg" alt="PPTV">
             <div class="channel-name">PPTV</div>
         </div>
-        
         <div class="channel" data-category="tv" onclick="changeChannel('https://cco-streamer1.cdn.3bbtv.com:8443/3bb/live/101/101.mpd', 'dac6cbd9d17a451bb76386f52469e0e9','2e2ac52cadf843459915eaa1a9b95e48')">
             <img src="https://img2.pic.in.th/pic/AsianHit.png" alt="AsianHit">
             <div class="channel-name">AsianHiT</div>
@@ -318,7 +321,6 @@
             <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE///channelicon//3BBsports1_new.png" alt="3bbSport">
             <div class="channel-name">3bbSport</div>
         </div>
-
         <div class="channel" data-category="sports" onclick="changeChannel('https://max01.mquanggiu290.workers.dev/chunks/max01_720.m3u8?token=' + generateMax01Token())">
             <img src="https://placehold.co/100x100/333/FFF?text=MAX01" alt="Max01">
             <div class="channel-name">Max01</div>
@@ -341,26 +343,31 @@
             const buttons = document.querySelectorAll('.category-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
 
-            // เพิ่มคลาส active ให้ปุ่มที่ถูกกด
-            event.target.classList.add('active');
+            // เพิ่มคลาส active ให้ปุ่มที่เพิ่งถูกกด (อ้างอิงจาก event)
+            if(event && event.target) {
+                event.target.classList.add('active');
+            } else {
+                // กรณีรันตอนโหลดหน้าเว็บ
+                document.querySelector('.category-btn[onclick="filterCategory(\'' + category + '\')"]').classList.add('active');
+            }
 
             // ดึงช่องทั้งหมด
             const channels = document.querySelectorAll('.channel');
             
             channels.forEach(channel => {
-                if (category === 'all') {
-                    // ถ้าเลือกทั้งหมด ให้ลบคลาส hidden ออก
+                // ถ้าหมวดหมู่ตรงกับที่กด ให้แสดง ถ้าไม่ตรงให้ซ่อน
+                if (channel.getAttribute('data-category') === category) {
                     channel.classList.remove('hidden');
                 } else {
-                    // ถ้าหมวดหมู่ตรงกับที่กด ให้แสดง ถ่าไม่ตรงให้ซ่อน
-                    if (channel.getAttribute('data-category') === category) {
-                        channel.classList.remove('hidden');
-                    } else {
-                        channel.classList.add('hidden');
-                    }
+                    channel.classList.add('hidden');
                 }
             });
         }
+
+        // ตั้งค่าให้กรอง "ช่องทีวี" ตั้งแต่เปิดหน้าเว็บขึ้นมา
+        document.addEventListener('DOMContentLoaded', () => {
+            filterCategory('tv');
+        });
 
         // ฟังก์ชันสร้าง Token สำหรับ Max01
         function generateMax01Token() {
