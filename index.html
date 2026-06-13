@@ -269,10 +269,12 @@
             <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE///channelicon//3BBsports1_new.png" alt="3bbSport">
             <div class="channel-name">3bbSport</div>
         </div>
+
         <div class="channel" onclick="changeChannel('https://max02-720.shchenyu8810.workers.dev/play/max02')">
-    <img src="ลิงก์รูปภาพโลโก้" alt="ชื่อช่อง">
-    <div class="channel-name">mono1</div>
-</div>
+            <img src="https://placehold.co/100x100/333/FFF?text=MAX02" alt="Max02">
+            <div class="channel-name">Max02</div>
+        </div>
+
     </div>
 
     <div class="footer-credit">
@@ -284,15 +286,14 @@
 
         function changeChannel(file, keyId, key) {
             
-            // เช็คว่านามสกุลไฟล์เป็น .m3u8 หรือไม่ ถ้าใช่ให้เป็น hls ถ้าไม่ใช่ให้เป็น dash
-            var streamType = file.includes('.m3u8') ? 'hls' : 'dash';
+            // ปรับตรรกะใหม่: ถ้าลิงก์มี .mpd ถือเป็น dash ถ้านอกเหนือจากนั้น (รวมไฟล์ที่ไม่มีนามสกุล) ให้เล่นเป็น hls
+            var streamType = file.includes('.mpd') ? 'dash' : 'hls';
 
             var sourceConfig = {
                 file: file,
                 type: streamType
             };
 
-            // ใส่ DRM เฉพาะเมื่อมี keyId และ key ส่งมาด้วย
             if (keyId && key) {
                 sourceConfig.drm = {
                     clearkey: {
