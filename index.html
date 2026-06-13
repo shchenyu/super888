@@ -270,6 +270,13 @@
             <div class="channel-name">3bbSport</div>
         </div>
 
+        <!-- ช่อง Max01 (ดึง Worker Max01 + สร้าง Token ของ Max01) -->
+        <div class="channel" onclick="changeChannel('https://max01.mquanggiu290.workers.dev/chunks/max01_720.m3u8?token=' + generateMax01Token())">
+            <img src="https://placehold.co/100x100/333/FFF?text=MAX01" alt="Max01">
+            <div class="channel-name">Max01</div>
+        </div>
+
+        <!-- ช่อง Max02 (ดึง Worker Max02 + สร้าง Token ของ Max02) -->
         <div class="channel" onclick="changeChannel('https://max02.mquanggiu290.workers.dev/chunks/max02_720.m3u8?token=' + generateMax02Token())">
             <img src="https://placehold.co/100x100/333/FFF?text=MAX02" alt="Max02">
             <div class="channel-name">Max02</div>
@@ -282,12 +289,19 @@
     </div>
 
     <script>
-        // ฟังก์ชันสร้าง Token ป้องกันลิงก์ให้ตรงกับ Cloudflare Worker
-        function generateMax02Token() {
-            var salt = "AutoRandomMax02_Salt"; // ต้องเป็นคำเดียวกับ TOKEN_SALT ใน Worker
+        // ฟังก์ชันสร้าง Token สำหรับ Max01
+        function generateMax01Token() {
+            var salt = "AutoRandomMax01_Salt"; 
             var currentHour = Math.floor(Date.now() / 3600000);
             var rawToken = salt + "_" + currentHour;
-            // สร้างเป็น Base64
+            return btoa(rawToken).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+        }
+
+        // ฟังก์ชันสร้าง Token สำหรับ Max02
+        function generateMax02Token() {
+            var salt = "AutoRandomMax02_Salt"; 
+            var currentHour = Math.floor(Date.now() / 3600000);
+            var rawToken = salt + "_" + currentHour;
             return btoa(rawToken).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
         }
 
