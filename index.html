@@ -132,6 +132,7 @@
             height: 90px;
             object-fit: contain;
             border-radius: 10px;
+            background-color: #222; /* เพิ่มสีพื้นหลังกันภาพแหว่งตอนโหลด */
         }
 
         .channel-name {
@@ -415,7 +416,7 @@
 
     <script>
         let currentPlayingFile = ''; 
-        let tsPlayerInstance = null; // เก็บ Instance สำหรับการเล่น TS
+        let tsPlayerInstance = null; 
 
         function filterCategory(category) {
             const buttons = document.querySelectorAll('.category-btn');
@@ -438,7 +439,11 @@
 
         document.querySelectorAll('.channel').forEach(channel => {
             channel.addEventListener('click', function() {
-                document.querySelectorAll('.channel').forEach(c => c.classList.remove('active'));
+                // ปรับปรุงประสิทธิภาพ: ค้นหาตัวเก่าที่ active และลบออกโดยไม่ต้องวนลูปทุกตัว
+                const currentActive = document.querySelector('.channel.active');
+                if (currentActive) {
+                    currentActive.classList.remove('active');
+                }
                 this.classList.add('active');
             });
         });
@@ -487,14 +492,13 @@
             width: "100%",
             aspectratio: "16:9",
             autostart: true,
-            mute: false
+            mute: true // ปรับเป็น true เพื่อให้เบราว์เซอร์อนุญาตเล่นวิดีโอทันทีโดยไม่ปิดกั้น
         });
 
         function changeChannel(file, keyId, key) {
             if (file === currentPlayingFile) return;
             currentPlayingFile = file;
 
-            // ตรวจสอบว่าไฟล์เป็นนามสกุล .ts หรือไม่
             var isMpegTs = /\.ts(\?|$)/i.test(file);
             
             const jwWrapper = document.getElementById('jw-wrapper');
@@ -507,10 +511,8 @@
                 jwWrapper.style.display = 'none';
                 tsPlayer.style.display = 'block';
                 
-                // สั่งหยุด JW Player ก่อน
                 try { if (playerInstance.getState() === 'playing') playerInstance.stop(); } catch(e){}
 
-                // เคลียร์ไฟล์ TS เดิมที่เคยเล่นให้สะอาดหมดจด (แก้บั๊กเสียงผีหลอก)
                 if (tsPlayerInstance) {
                     tsPlayer.pause(); 
                     tsPlayer.removeAttribute('src'); 
@@ -526,7 +528,8 @@
                         url: file
                     }, {
                         enableStashBuffer: true,        
-                        liveBufferLatencyChasing: false,  
+                        liveBufferLatencyChasing: true, // ปรับจูนให้รักษาดีเลย์ เพื่อป้องกันภาพลากและเสียงไม่ตรง
+                        liveBufferLatencyMaxLatency: 3, // ถ้าระยะเวลาห่างเกิน 3 วินาที ให้ข้ามเพื่อให้วิดีโอเป็นปัจจุบันที่สุด
                         autoCleanupSourceBuffer: true,   
                         autoCleanupMaxBackwardDuration: 60,
                         autoCleanupMinBackwardDuration: 30
@@ -535,16 +538,13 @@
                     tsPlayerInstance.attachMediaElement(tsPlayer);
                     tsPlayerInstance.load();
                     
-                    // แก้บั๊ก Infinite Loop: หน่วงเวลา 3 วินาทีก่อนต่อใหม่
                     tsPlayerInstance.on(mpegts.Events.ERROR, (errorType, errorDetail, errorInfo) => {
                         console.warn("MPEG-TS Error:", errorType, errorDetail);
                         if (tsPlayerInstance) {
                             tsPlayerInstance.pause();
                             tsPlayerInstance.unload();
                             
-                            // รอ 3 วินาที (3000ms) แล้วค่อยดึงสัญญาณใหม่
                             setTimeout(() => {
-                                // เช็คอีกรอบว่า user ไม่ได้กดเปลี่ยนช่องหนีไปแล้ว
                                 if (tsPlayerInstance && currentPlayingFile === file) {
                                     console.log("Reconnecting TS Stream...");
                                     tsPlayerInstance.load();
@@ -566,7 +566,6 @@
                 jwWrapper.style.display = 'block';
                 tsPlayer.style.display = 'none';
                 
-                // เคลียร์ไฟล์ TS เดิมให้สะอาดหมดจดก่อนสลับ
                 if (tsPlayerInstance) {
                     tsPlayer.pause(); 
                     tsPlayer.removeAttribute('src'); 
