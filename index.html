@@ -317,14 +317,14 @@
             <div class="channel-name">Max02</div>
         </div>
         <div class="channel" data-category="sports" onclick="changeChannel('https://bein1.mquanggiu290.workers.dev/chunks/bein1_720.m3u8?token=' + generateBein1Token())">
-            <img src="https://cms.dmpcdn.com/livetv/2023/07/24/5f3c5240-29cc-11ee-b2f4-e9de482d866e_webp_original.webp" alt="BeIN 1">
+            <img src="https://images.streamx-web.org/images/tv/png/epl-bein1.png" alt="BeIN 1">
             <div class="channel-name">BeIN 1</div>
         </div>
-                <div class="channel" data-category="sports" onclick="changeChannel('https://bein2.mquanggiu290.workers.dev/chunks/bein2_720.m3u8?token=' + generateBein1Token())">
+        <div class="channel" data-category="sports" onclick="changeChannel('https://bein2.mquanggiu290.workers.dev/chunks/bein2_720.m3u8?token=' + generateBein2Token())">
             <img src="https://cms.dmpcdn.com/livetv/2023/07/24/5f346300-29cc-11ee-b2f4-e9de482d866e_webp_original.webp" alt="BeIN 2">
             <div class="channel-name">BeIN 2</div>
         </div>
-            <div class="channel" data-category="sports" onclick="changeChannel('https://bein3.mquanggiu290.workers.dev/chunks/bein3_720.m3u8?token=' + generateBein1Token())">
+        <div class="channel" data-category="sports" onclick="changeChannel('https://bein3.mquanggiu290.workers.dev/chunks/bein3_720.m3u8?token=' + generateBein3Token())">
             <img src="https://cms.dmpcdn.com/livetv/2023/07/24/5fda18e0-29cc-11ee-846b-a1c4e5181c87_webp_original.webp" alt="BeIN 3">
             <div class="channel-name">BeIN 3</div>
         </div>
@@ -336,12 +336,10 @@
     </div>
 
     <script>
-        // แก้ไขบั๊กระบบกรองหมวดหมู่ให้เสถียรและปลอดภัยขึ้น
         function filterCategory(category) {
             const buttons = document.querySelectorAll('.category-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
 
-            // ใช้การค้นหาปุ่มที่มี onclick ตรงกับ category แทนการใช้ event.target
             const targetBtn = document.querySelector(`.category-btn[onclick="filterCategory('${category}')"]`);
             if(targetBtn) {
                 targetBtn.classList.add('active');
@@ -357,12 +355,10 @@
             });
         }
 
-        // ตั้งค่าให้กรอง "ช่องทีวี" ตั้งแต่เปิดหน้าเว็บขึ้นมา
         document.addEventListener('DOMContentLoaded', () => {
             filterCategory('tv');
         });
 
-        // ฟังก์ชันสร้าง Token
         function generateMax01Token() {
             var salt = "AutoRandomMax01_Salt"; 
             var currentHour = Math.floor(Date.now() / 3600000);
@@ -384,14 +380,14 @@
             return btoa(rawToken).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
         }
 
-        function generateBein1Token() {
+        function generateBein2Token() {
             var salt = "AutoRandomBein2_Salt"; 
             var currentHour = Math.floor(Date.now() / 3600000);
             var rawToken = salt + "_" + currentHour;
             return btoa(rawToken).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
         }
         
-        function generateBein1Token() {
+        function generateBein3Token() {
             var salt = "AutoRandomBein3_Salt"; 
             var currentHour = Math.floor(Date.now() / 3600000);
             var rawToken = salt + "_" + currentHour;
