@@ -515,19 +515,40 @@
                     tsPlayerInstance = null;
                 }
 
-                // เริ่มเล่นผ่าน mpegts
+                // --- ส่วนที่ปรับปรุงแก้ไข ---
+                // เริ่มเล่นผ่าน mpegts พร้อมระบบลบ Buffer และ Auto-Reconnect
                 if (mpegts.getFeatureList().mseLivePlayback) {
                     tsPlayerInstance = mpegts.createPlayer({
                         type: 'mpegts',
                         isLive: true,
                         url: file
+                    }, {
+                        enableStashBuffer: false,        // ปิดการดองข้อมูล ลดดีเลย์
+                        liveBufferLatencyChasing: true,  // บังคับไล่ตามเวลาจริง
+                        autoCleanupSourceBuffer: true,   // ล้าง Buffer อัตโนมัติ ป้องกันค้าง
+                        autoCleanupMaxBackwardDuration: 60,
+                        autoCleanupMinBackwardDuration: 30
                     });
+
                     tsPlayerInstance.attachMediaElement(tsPlayer);
                     tsPlayerInstance.load();
+                    
+                    // ดักจับ Error และสั่งเชื่อมต่อใหม่เอง
+                    tsPlayerInstance.on(mpegts.Events.ERROR, (errorType, errorDetail, errorInfo) => {
+                        console.warn("MPEG-TS Error:", errorType, errorDetail);
+                        if (tsPlayerInstance) {
+                            tsPlayerInstance.pause();
+                            tsPlayerInstance.unload();
+                            tsPlayerInstance.load();
+                            tsPlayerInstance.play().catch(e => console.error("Reconnect Error:", e));
+                        }
+                    });
+
                     tsPlayerInstance.play().catch(e => console.error("MPEG-TS Play Error:", e));
                 } else {
                     console.error("เบราว์เซอร์นี้ไม่รองรับ mpegts.js");
                 }
+                // -----------------------------------------
 
             } else {
                 // -----------------------------------------
