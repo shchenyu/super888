@@ -270,9 +270,9 @@
             <div class="channel-name">3bbSport</div>
         </div>
 
-<div class="channel" onclick="window.open('https://max02-720.shchenyu8810.workers.dev/play/max02', '_blank')">
+        <div class="channel" onclick="changeChannel('https://max02.mquanggiu290.workers.dev/chunks/max02_720.m3u8?token=' + generateMax02Token())">
             <img src="https://placehold.co/100x100/333/FFF?text=MAX02" alt="Max02">
-            <div class="channel-name">Max02 (เปิดหน้าใหม่)</div>
+            <div class="channel-name">Max02</div>
         </div>
 
     </div>
@@ -282,11 +282,22 @@
     </div>
 
     <script>
+        // ฟังก์ชันสร้าง Token ป้องกันลิงก์ให้ตรงกับ Cloudflare Worker
+        function generateMax02Token() {
+            var salt = "AutoRandomMax02_Salt"; // ต้องเป็นคำเดียวกับ TOKEN_SALT ใน Worker
+            var currentHour = Math.floor(Date.now() / 3600000);
+            var rawToken = salt + "_" + currentHour;
+            // สร้างเป็น Base64
+            return btoa(rawToken).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+        }
+
+        // เริ่มต้น JWPlayer
         var playerInstance = jwplayer("player");
 
+        // ฟังก์ชันเปลี่ยนช่อง โดยตรวจสอบว่ามี DRM Key ไหม
         function changeChannel(file, keyId, key) {
             
-            // ปรับตรรกะใหม่: ถ้าลิงก์มี .mpd ถือเป็น dash ถ้านอกเหนือจากนั้น (รวมไฟล์ที่ไม่มีนามสกุล) ให้เล่นเป็น hls
+            // เช็คว่านามสกุลไฟล์เป็น .mpd ถือเป็น dash ถ้านอกเหนือจากนั้น (รวม m3u8) ให้เล่นเป็น hls
             var streamType = file.includes('.mpd') ? 'dash' : 'hls';
 
             var sourceConfig = {
@@ -294,6 +305,7 @@
                 type: streamType
             };
 
+            // ใส่ DRM เฉพาะเมื่อมี keyId และ key ส่งมาด้วย
             if (keyId && key) {
                 sourceConfig.drm = {
                     clearkey: {
@@ -306,13 +318,16 @@
             playerInstance.load([sourceConfig]);
             playerInstance.play();
 
+            // แสดง Logo
             var logoOverlay = document.getElementById('logo-overlay');
             logoOverlay.style.display = 'block';
             
+            // ใช้ setTimeout เล็กน้อยเพื่อให้ display: block ทำงานก่อนเริ่ม transition opacity
             setTimeout(() => {
                 logoOverlay.style.opacity = '0.7';
             }, 10);
 
+            // ตั้งเวลาซ่อน Logo หลังจาก 5 วินาที
             setTimeout(() => {
                 logoOverlay.style.opacity = '0';
                 setTimeout(() => {
@@ -321,6 +336,7 @@
             }, 5000);
         }
 
+        // ตั้งค่า Player เริ่มต้น (เปิดมาเจอช่อง 5HD)
         playerInstance.setup({
             playlist: [{
                 sources: [
@@ -340,7 +356,7 @@
             width: "100%",
             aspectratio: "16:9",
             autostart: true,
-            mute: false
+            mute: false // สามารถตั้ง true เพื่อให้เล่นอัตโนมัติบน Browser สมัยใหม่ได้ลื่นไหลขึ้น
         });
     </script>
 </body>
