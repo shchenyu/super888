@@ -291,23 +291,23 @@
             <div class="channel-name">3bbSport</div>
         </div>
         
-        <div class="channel" data-category="sports" onclick="changeChannel('https://max01.mquanggiu290.workers.dev/chunks/max01_720.m3u8')">
+        <div class="channel" data-category="sports" onclick="changeChannel('https://max01.mquanggiu290.workers.dev/chunks/max01_720.m3u8?token=' + generateToken('Max01'))">
             <img src="https://placehold.co/100x100/333/FFF?text=MAX01" alt="Max01">
             <div class="channel-name">Max01</div>
         </div>
-        <div class="channel" data-category="sports" onclick="changeChannel('https://max02.mquanggiu290.workers.dev/chunks/max02_720.m3u8')">
+        <div class="channel" data-category="sports" onclick="changeChannel('https://max02.mquanggiu290.workers.dev/chunks/max02_720.m3u8?token=' + generateToken('Max02'))">
             <img src="https://placehold.co/100x100/333/FFF?text=MAX02" alt="Max02">
             <div class="channel-name">Max02</div>
         </div>
-        <div class="channel" data-category="sports" onclick="changeChannel('https://bein1.mquanggiu290.workers.dev/chunks/bein1_720.m3u8')">
+        <div class="channel" data-category="sports" onclick="changeChannel('https://bein1.mquanggiu290.workers.dev/chunks/bein1_720.m3u8?token=' + generateToken('Bein1'))">
             <img src="https://images.streamx-web.org/images/tv/png/epl-bein1.png" alt="BeIN 1">
             <div class="channel-name">BeIN 1</div>
         </div>
-        <div class="channel" data-category="sports" onclick="changeChannel('https://bein2.mquanggiu290.workers.dev/chunks/bein2_720.m3u8')">
+        <div class="channel" data-category="sports" onclick="changeChannel('https://bein2.mquanggiu290.workers.dev/chunks/bein2_720.m3u8?token=' + generateToken('Bein2'))">
             <img src="https://cms.dmpcdn.com/livetv/2023/07/24/5f346300-29cc-11ee-b2f4-e9de482d866e_webp_original.webp" alt="BeIN 2">
             <div class="channel-name">BeIN 2</div>
         </div>
-        <div class="channel" data-category="sports" onclick="changeChannel('https://bein3.mquanggiu290.workers.dev/chunks/bein3_720.m3u8')">
+        <div class="channel" data-category="sports" onclick="changeChannel('https://bein3.mquanggiu290.workers.dev/chunks/bein3_720.m3u8?token=' + generateToken('Bein3'))">
             <img src="https://cms.dmpcdn.com/livetv/2023/07/24/5fda18e0-29cc-11ee-846b-a1c4e5181c87_webp_original.webp" alt="BeIN 3">
             <div class="channel-name">BeIN 3</div>
         </div>
@@ -341,6 +341,14 @@
         document.addEventListener('DOMContentLoaded', () => {
             filterCategory('tv');
         });
+
+        // นำฟังก์ชันสร้าง Token กลับมาใส่
+        function generateToken(channelName) {
+            var salt = "AutoRandom" + channelName + "_Salt"; 
+            var currentHour = Math.floor(Date.now() / 3600000);
+            var rawToken = salt + "_" + currentHour;
+            return btoa(rawToken).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+        }
 
         var playerInstance = jwplayer("player");
 
