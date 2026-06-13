@@ -39,25 +39,6 @@
 
         #player { width: 100%; }
 
-        #logo-overlay {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            width: 35px; 
-            height: 35px;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-            pointer-events: none;
-            z-index: 10;
-            display: none;
-        }
-
-        #logo-overlay img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
         .category-tabs {
             display: flex;
             justify-content: center;
@@ -138,6 +119,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
             width: 100%;
+            max-width: 90px; /* ปรับเพื่อไม่ให้ข้อความล้นกล่อง */
         }
 
         .footer-credit {
@@ -158,7 +140,10 @@
                 width: 50px;
                 height: 50px;
             }
-            .channel-name { font-size: 10px; }
+            .channel-name { 
+                font-size: 10px; 
+                max-width: 50px; /* ปรับให้พอดีกับภาพบนมือถือ */
+            }
             .category-btn { padding: 8px 20px; font-size: 12px; }
         }
     </style>
@@ -167,9 +152,6 @@
 
     <div id="player-container">
         <div id="player"></div>
-        <div id="logo-overlay">
-            <img src="https://img5.pic.in.th/file/secure-sv1/11zon_resized-3bb1f59abd215d288.png" alt="Logo">
-        </div>
     </div>
 
     <div class="category-tabs">
@@ -308,23 +290,24 @@
             <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE///channelicon//3BBsports1_new.png" alt="3bbSport">
             <div class="channel-name">3bbSport</div>
         </div>
-        <div class="channel" data-category="sports" onclick="changeChannel('https://max01.mquanggiu290.workers.dev/chunks/max01_720.m3u8?token=' + generateMax01Token())">
+        
+        <div class="channel" data-category="sports" onclick="changeChannel('https://max01.mquanggiu290.workers.dev/chunks/max01_720.m3u8?token=' + generateToken('Max01'))">
             <img src="https://placehold.co/100x100/333/FFF?text=MAX01" alt="Max01">
             <div class="channel-name">Max01</div>
         </div>
-        <div class="channel" data-category="sports" onclick="changeChannel('https://max02.mquanggiu290.workers.dev/chunks/max02_720.m3u8?token=' + generateMax02Token())">
+        <div class="channel" data-category="sports" onclick="changeChannel('https://max02.mquanggiu290.workers.dev/chunks/max02_720.m3u8?token=' + generateToken('Max02'))">
             <img src="https://placehold.co/100x100/333/FFF?text=MAX02" alt="Max02">
             <div class="channel-name">Max02</div>
         </div>
-        <div class="channel" data-category="sports" onclick="changeChannel('https://bein1.mquanggiu290.workers.dev/chunks/bein1_720.m3u8?token=' + generateBein1Token())">
-            <img src="https://images.streamx-web.org/images/tv/png/epl-bein1.png" alt="BeIN 1">
+        <div class="channel" data-category="sports" onclick="changeChannel('https://bein1.mquanggiu290.workers.dev/chunks/bein1_720.m3u8?token=' + generateToken('Bein1'))">
+            <img src="https://cms.dmpcdn.com/livetv/2023/07/24/5f3c5240-29cc-11ee-b2f4-e9de482d866e_webp_original.webp" alt="BeIN 1">
             <div class="channel-name">BeIN 1</div>
         </div>
-        <div class="channel" data-category="sports" onclick="changeChannel('https://bein2.mquanggiu290.workers.dev/chunks/bein2_720.m3u8?token=' + generateBein2Token())">
+        <div class="channel" data-category="sports" onclick="changeChannel('https://bein2.mquanggiu290.workers.dev/chunks/bein2_720.m3u8?token=' + generateToken('Bein2'))">
             <img src="https://cms.dmpcdn.com/livetv/2023/07/24/5f346300-29cc-11ee-b2f4-e9de482d866e_webp_original.webp" alt="BeIN 2">
             <div class="channel-name">BeIN 2</div>
         </div>
-        <div class="channel" data-category="sports" onclick="changeChannel('https://bein3.mquanggiu290.workers.dev/chunks/bein3_720.m3u8?token=' + generateBein3Token())">
+        <div class="channel" data-category="sports" onclick="changeChannel('https://bein3.mquanggiu290.workers.dev/chunks/bein3_720.m3u8?token=' + generateToken('Bein3'))">
             <img src="https://cms.dmpcdn.com/livetv/2023/07/24/5fda18e0-29cc-11ee-846b-a1c4e5181c87_webp_original.webp" alt="BeIN 3">
             <div class="channel-name">BeIN 3</div>
         </div>
@@ -359,36 +342,9 @@
             filterCategory('tv');
         });
 
-        function generateMax01Token() {
-            var salt = "AutoRandomMax01_Salt"; 
-            var currentHour = Math.floor(Date.now() / 3600000);
-            var rawToken = salt + "_" + currentHour;
-            return btoa(rawToken).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
-        }
-
-        function generateMax02Token() {
-            var salt = "AutoRandomMax02_Salt"; 
-            var currentHour = Math.floor(Date.now() / 3600000);
-            var rawToken = salt + "_" + currentHour;
-            return btoa(rawToken).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
-        }
-
-        function generateBein1Token() {
-            var salt = "AutoRandomBein1_Salt"; 
-            var currentHour = Math.floor(Date.now() / 3600000);
-            var rawToken = salt + "_" + currentHour;
-            return btoa(rawToken).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
-        }
-
-        function generateBein2Token() {
-            var salt = "AutoRandomBein2_Salt"; 
-            var currentHour = Math.floor(Date.now() / 3600000);
-            var rawToken = salt + "_" + currentHour;
-            return btoa(rawToken).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
-        }
-        
-        function generateBein3Token() {
-            var salt = "AutoRandomBein3_Salt"; 
+        // ฟังก์ชันสร้าง Token รวมเป็นตัวเดียว ใช้หลักการส่งชื่อช่องเข้าไป
+        function generateToken(channelName) {
+            var salt = "AutoRandom" + channelName + "_Salt"; 
             var currentHour = Math.floor(Date.now() / 3600000);
             var rawToken = salt + "_" + currentHour;
             return btoa(rawToken).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
@@ -396,8 +352,8 @@
         
         var playerInstance = jwplayer("player");
 
+        // ถอดระบบแสดง Logo ทิ้ง เหลือแค่คำสั่งโหลดช่องและเล่นวิดีโอ
         function changeChannel(file, keyId, key) {
-            
             var streamType = file.includes('.mpd') ? 'dash' : 'hls';
 
             var sourceConfig = {
@@ -416,20 +372,6 @@
 
             playerInstance.load([sourceConfig]);
             playerInstance.play();
-
-            var logoOverlay = document.getElementById('logo-overlay');
-            logoOverlay.style.display = 'block';
-            
-            setTimeout(() => {
-                logoOverlay.style.opacity = '0.7';
-            }, 10);
-
-            setTimeout(() => {
-                logoOverlay.style.opacity = '0';
-                setTimeout(() => {
-                    logoOverlay.style.display = 'none';
-                }, 500);
-            }, 5000);
         }
 
         playerInstance.setup({
