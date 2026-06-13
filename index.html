@@ -6,10 +6,13 @@
     <title>FreeTV</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
     <script src="https://ssl.p.jwpcdn.com/player/v/8.26.0/jwplayer.js"></script>
     <script>
         jwplayer.key = 'XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo';
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/mpegts.js@1.7.3/dist/mpegts.min.js"></script>
 
     <style>
         * { box-sizing: border-box; }
@@ -29,16 +32,29 @@
         #player-container {
             width: 100%;
             max-width: 800px;
-            background-color: #111;
+            background-color: #000;
             padding: 0;
             border-radius: 12px;
             position: relative;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
             overflow: hidden;
             margin-bottom: 20px;
+            /* กำหนดอัตราส่วนให้กล่องตายตัว ป้องกัน UI กระตุกตอนสลับ Player */
+            aspect-ratio: 16 / 9; 
         }
 
-        #player { width: 100%; }
+        /* กล่องห่อ JW Player */
+        #jw-wrapper { width: 100%; height: 100%; }
+        #player { width: 100%; height: 100%; }
+
+        /* กล่องเล่นไฟล์ .ts (ซ่อนไว้เป็นค่าเริ่มต้น) */
+        #ts-player {
+            width: 100%;
+            height: 100%;
+            display: none;
+            outline: none;
+            background-color: #000;
+        }
 
         .category-tabs {
             display: flex;
@@ -109,9 +125,7 @@
             box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
         }
 
-        .channel.hidden {
-            display: none !important;
-        }
+        .channel.hidden { display: none !important; }
 
         .channel img {
             width: 90px;
@@ -147,14 +161,8 @@
                 grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
                 gap: 10px;
             }
-            .channel img {
-                width: 50px;
-                height: 50px;
-            }
-            .channel-name { 
-                font-size: 11px; 
-                max-width: 50px; 
-            }
+            .channel img { width: 50px; height: 50px; }
+            .channel-name { font-size: 11px; max-width: 50px; }
             .category-btn { padding: 8px 20px; font-size: 12px; }
         }
     </style>
@@ -162,7 +170,9 @@
 <body>
 
     <div id="player-container">
-        <div id="player"></div>
+        <div id="jw-wrapper"><div id="player"></div></div>
+        
+        <video id="ts-player" controls autoplay></video>
     </div>
 
     <div class="category-tabs">
@@ -326,22 +336,18 @@
             <img src="https://i.imgur.com/eRFE0jZ.png" alt="TSN 1" loading="lazy">
             <div class="channel-name">TSN 1</div>
         </div>
-
         <div class="channel" data-category="sports" onclick="changeChannel('https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/3n6slkgh54/out/v1/8977baf175da4b94873194613dd3fe55/cenc.mpd', 'daa8ea92553fd16cd6bfae2b8c582715', '4042e041b5639b79b69ae07a872eef9b')">
             <img src="https://i.ibb.co/fzHfwF5j/TSN2.png" alt="TSN 2" loading="lazy">
             <div class="channel-name">TSN 2</div>
         </div>
-
         <div class="channel" data-category="sports" onclick="changeChannel('https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/lzhmuzmjsl/out/v1/c171eeb214c749f2b351c79df317b21e/cenc.mpd', 'f5c2b30eac11be1e8cdfc9585f5fe6af', 'a8198d17bf9b0da77450fbb919a38b2d')">
             <img src="https://i.imgur.com/AYza8KO.png" alt="TSN 3" loading="lazy">
             <div class="channel-name">TSN 3</div>
         </div>
-
         <div class="channel" data-category="sports" onclick="changeChannel('https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/h9urpo3cwb/out/v1/fde190f369484bc6b6117cc16cd82a9f/cenc.mpd', 'c4088f5f265f9de50cffd80bf89308b7', '2c4d2239d96d532b4ec2050653611003')">
             <img src="https://i.imgur.com/qJyAWU8.png" alt="TSN 4" loading="lazy">
             <div class="channel-name">TSN 4</div>
         </div>
-
         <div class="channel" data-category="sports" onclick="changeChannel('https://otte.cache.aiv-cdn.net/bom-nitro/clients/dash/enc/jkcljgqbx8/out/v1/63bfa701559340f3a2a2cb1fccd24807/cenc.mpd', 'e853333da2c9196ea11374634231bc45', 'de2e2dbe818d78dfad07d6cd9a4c63d4')">
             <img src="https://i.imgur.com/HEzHpzz.png" alt="TSN 5" loading="lazy">
             <div class="channel-name">TSN 5</div>
@@ -350,42 +356,34 @@
             <img src="https://i.ibb.co.com/9JJ04g9/1000284076.png" alt="Caze TV" loading="lazy">
             <div class="channel-name">Caze TV</div>
         </div>
-
         <div class="channel" data-category="sports" onclick="changeChannel('https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/Caze_TV.m3u8')">
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpFVJGATy70KVBZ0txjIVDSVXTQUCSykt_5A&s" alt="CAZE TV 1" loading="lazy">
             <div class="channel-name">CAZE TV 1</div>
         </div>
-
         <div class="channel" data-category="sports" onclick="changeChannel('https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/3ynrpdanq2/out/v1/81fd4c26584044d2b1a1cc5b32fa9af0/cenc.mpd?amznDtid=AOAGZA014O5RE&encoding=segmentBase', '34475edab991ad5e92548aebd710410a', '501b209cccd323ac00bf5ac15b406cb4')">
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpFVJGATy70KVBZ0txjIVDSVXTQUCSykt_5A&s" alt="CAZE TV 2" loading="lazy">
             <div class="channel-name">CAZE TV 2</div>
         </div>
-
         <div class="channel" data-category="sports" onclick="changeChannel('https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/epg9sw6owc/out/v1/e50aecefcb294fae85d6b343e0a6f1cc/cenc.mpd?amznDtid=AOAGZA014O5RE&encoding=segmentBase', '9752ef72590ef441ffa3731e0486fbc0', 'db63ec7b9f11348b7cc6808a54c99457')">
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpFVJGATy70KVBZ0txjIVDSVXTQUCSykt_5A&s" alt="CAZE TV 3" loading="lazy">
             <div class="channel-name">CAZE TV 3</div>
         </div>
-
         <div class="channel" data-category="sports" onclick="changeChannel('https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash-sd/enc/hubonmgf5k/out/v1/10560d92577e4917973aa4624124ecd6/cenc-sd.mpd', '45bbd582f220f438f896450d8306a3f2', '582c6ba7f64bbc0f2d91c6b0c265760c')">
             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/DSports_logo_2022.svg/960px-DSports_logo_2022.svg.png?_=20240702054322" alt="DSPORTS" loading="lazy">
             <div class="channel-name">DSPORTS</div>
         </div>
-
         <div class="channel" data-category="sports" onclick="changeChannel('https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash-sd/enc/kp7qfx2tly/out/v1/bbfb730b45b74d4ea875d75786ea3f13/cenc-sd.mpd', '8afa490e1640be969729fb459182e4ec', '6f129820cdd5b6978a98c604c72cf05b')">
             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/DSports_logo_2022.svg/960px-DSports_logo_2022.svg.png?_=20240702054322" alt="DSPORTS+" loading="lazy">
             <div class="channel-name">DSPORTS+</div>
         </div>
-
         <div class="channel" data-category="sports" onclick="changeChannel('https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash-sd/enc/hufm7lgnhx/out/v1/5045630288d44123ba85427b2c36f29f/cenc-sd.mpd', '18044a84b7e6c1bbf852591797e53a2c', '38b3b6f8810917d89636927bddb79294')">
             <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/DSports2.png" alt="DSPORTS 2" loading="lazy">
             <div class="channel-name">DSPORTS 2</div>
         </div>
-
         <div class="channel" data-category="sports" onclick="changeChannel('https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash-sd/enc/1a5vdd4i8j/out/v1/db14823b937045ac8b2b0effbcdded45/cenc-sd.mpd', '5f096c1f9e243b31ddc3bf4f5d88fc5f', '27334536d6077737b321c64663ebf59d')">
             <img src="https://i.imgur.com/oT5CAvd.png" alt="TUDN" loading="lazy">
             <div class="channel-name">TUDN</div>
         </div>
-        
         <div class="channel" data-category="sports" onclick="changeChannel('https://ott-balancer.tvri.go.id/live/eds/SportHD/hls/SportHD.m3u8')">
             <img src="https://football-tribe.com/indonesia/wp-content/uploads/sites/10/2019/01/TVRI-Sport-HD.png" alt="TVRI SPORT" loading="lazy">
             <div class="channel-name">TVRI SPORT</div>
@@ -395,17 +393,14 @@
             <img src="https://i.ibb.co.com/JFScp4g2/1000284128.png" alt="Fox Sports 1" loading="lazy">
             <div class="channel-name">Fox Sports 1</div>
         </div>
-
         <div class="channel" data-category="sports" onclick="changeChannel('http://starhub.pro/live/farhat-3379/67897-913379/3421.ts')">
             <img src="https://i.ibb.co.com/CpxyjYHH/1000284129.png" alt="Fox Sports 2" loading="lazy">
             <div class="channel-name">Fox Sports 2</div>
         </div>
-
         <div class="channel" data-category="sports" onclick="changeChannel('https://testt.mquanggiu290.workers.dev/live.m3u8')">
             <img src="https://i.ibb.co/k6KQwhFN/1000284104.png" alt="Unite8 Sports 1" loading="lazy">
             <div class="channel-name">Unite8 Sports 1</div>
         </div>
-
         <div class="channel" data-category="sports" onclick="changeChannel('http://starhub.pro/live/farhat-3379/67897-913379/98841.ts')">
             <img src="https://i.ibb.co/S4DXyQkZ/1000284105.png" alt="Unite8 Sports 2" loading="lazy">
             <div class="channel-name">Unite8 Sports 2</div>
@@ -418,7 +413,8 @@
     </div>
 
     <script>
-        let currentPlayingFile = ''; // 💡 ตัวแปรเก็บช่องปัจจุบัน ป้องกันโหลดซ้ำ
+        let currentPlayingFile = ''; 
+        let tsPlayerInstance = null; // เก็บ Instance สำหรับการเล่น TS
 
         function filterCategory(category) {
             const buttons = document.querySelectorAll('.category-btn');
@@ -439,7 +435,6 @@
             });
         }
 
-        // ระบบจัดการตอนคลิกเลือกช่องเพื่อสลับแสงเงา
         document.querySelectorAll('.channel').forEach(channel => {
             channel.addEventListener('click', function() {
                 document.querySelectorAll('.channel').forEach(c => c.classList.remove('active'));
@@ -450,7 +445,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             filterCategory('tv');
             
-            // 💡 ระบบป้องกันรูปภาพเสีย (Fallback)
             const images = document.querySelectorAll('.channel img');
             images.forEach(img => {
                 img.addEventListener('error', function() {
@@ -458,7 +452,6 @@
                 });
             });
             
-            // ตั้งค่าให้ช่อง 5HD เรืองแสงเป็นค่าเริ่มต้น
             const firstChannel = document.querySelector('.channel');
             if (firstChannel) {
                 firstChannel.classList.add('active');
@@ -474,37 +467,6 @@
         }
         
         var playerInstance = jwplayer("player");
-
-        function changeChannel(file, keyId, key) {
-            // 💡 ป้องกันการโหลดสตรีมซ้ำถ้ากดปุ่มช่องเดิม
-            if (file === currentPlayingFile) return;
-            currentPlayingFile = file;
-
-            var streamType = file.includes('.mpd') ? 'dash' : 'hls';
-
-            var sourceConfig = {
-                file: file,
-                type: streamType
-            };
-
-            if (keyId && key) {
-                sourceConfig.drm = {
-                    clearkey: {
-                        keyId: keyId,
-                        key: key
-                    }
-                };
-            }
-
-            // 💡 เพิ่ม Try-Catch ป้องกัน Player Crash
-            try {
-                playerInstance.load([sourceConfig]);
-                playerInstance.play();
-            } catch (error) {
-                console.error("JW Player Error: ", error);
-            }
-        }
-
         playerInstance.setup({
             playlist: [{
                 sources: [
@@ -526,6 +488,80 @@
             autostart: true,
             mute: false
         });
+
+        function changeChannel(file, keyId, key) {
+            if (file === currentPlayingFile) return;
+            currentPlayingFile = file;
+
+            // ตรวจสอบว่าไฟล์เป็นนามสกุล .ts หรือไม่
+            var isMpegTs = /\.ts(\?|$)/i.test(file);
+            
+            const jwWrapper = document.getElementById('jw-wrapper');
+            const tsPlayer = document.getElementById('ts-player');
+
+            if (isMpegTs) {
+                // -----------------------------------------
+                // โหมดเล่นไฟล์ MPEG-TS (.ts) ผ่าน mpegts.js
+                // -----------------------------------------
+                jwWrapper.style.display = 'none';
+                tsPlayer.style.display = 'block';
+                
+                // สั่งหยุด JW Player ก่อน
+                try { if (playerInstance.getState() === 'playing') playerInstance.stop(); } catch(e){}
+
+                // เคลียร์ไฟล์ TS เดิมที่เคยเล่น (ถ้ามี)
+                if (tsPlayerInstance) {
+                    tsPlayerInstance.destroy();
+                    tsPlayerInstance = null;
+                }
+
+                // เริ่มเล่นผ่าน mpegts
+                if (mpegts.getFeatureList().mseLivePlayback) {
+                    tsPlayerInstance = mpegts.createPlayer({
+                        type: 'mpegts',
+                        isLive: true,
+                        url: file
+                    });
+                    tsPlayerInstance.attachMediaElement(tsPlayer);
+                    tsPlayerInstance.load();
+                    tsPlayerInstance.play().catch(e => console.error("MPEG-TS Play Error:", e));
+                } else {
+                    console.error("เบราว์เซอร์นี้ไม่รองรับ mpegts.js");
+                }
+
+            } else {
+                // -----------------------------------------
+                // โหมดเล่นไฟล์ปกติ (DASH / HLS) ผ่าน JW Player
+                // -----------------------------------------
+                jwWrapper.style.display = 'block';
+                tsPlayer.style.display = 'none';
+                
+                // สั่งหยุดและทำลาย mpegts (เพื่อไม่ให้สูบอินเทอร์เน็ต)
+                if (tsPlayerInstance) {
+                    tsPlayerInstance.destroy();
+                    tsPlayerInstance = null;
+                }
+
+                var streamType = file.includes('.mpd') ? 'dash' : 'hls';
+                var sourceConfig = {
+                    file: file,
+                    type: streamType
+                };
+
+                if (keyId && key) {
+                    sourceConfig.drm = {
+                        clearkey: { keyId: keyId, key: key }
+                    };
+                }
+
+                try {
+                    playerInstance.load([sourceConfig]);
+                    playerInstance.play();
+                } catch (error) {
+                    console.error("JW Player Error: ", error);
+                }
+            }
+        }
     </script>
 </body>
 </html>
