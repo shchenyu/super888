@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreeTV</title>
+    
+    <script src="https://ssl.p.jwpcdn.com/player/v/8.26.0/jwplayer.js"></script>
+    <script>
+        jwplayer.key = 'XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo';
+    </script>
+
+    <style>
+        * { box-sizing: border-box; }
+        
+        body {
+            margin: 0;
+            padding: 20px 10px;
+            background-color: #050505;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        #player-container {
+            width: 100%;
+            max-width: 800px;
+            background-color: #111;
+            padding: 0;
+            border-radius: 12px;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        #player { width: 100%; }
+
+        .category-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .category-btn {
+            background-color: #1a1a1a;
+            color: #888;
+            border: 1px solid #333;
+            padding: 8px 25px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .category-btn:hover {
+            background-color: #2a2a2a;
+            color: #ddd;
+        }
+
+        .category-btn.active {
+            background-color: #1a1a1a;
+            color: #fff;
+            border-color: #fff; 
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.4); 
+        }
+
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .channel {
+            text-align: center;
+            background-color: #1a1a1a;
+            padding: 10px 4px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #333;
+        }
+
+        .channel:hover {
+            transform: scale(1.05);
+            background-color: #2a2a2a;
+            border-color: #555;
+        }
+
+        .channel.hidden {
+            display: none !important;
+        }
+
+        .channel img {
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        .channel-name {
+            color: #eee;
+            margin-top: 4px;
+            margin-bottom: 2px;
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+            max-width: 90px;
+        }
+
+        .footer-credit {
+            margin-top: auto;
+            padding: 30px 10px 10px 10px;
+            text-align: center;
+            width: 100%;
+            color: #888;
+            font-size: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .channel-grid {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+                gap: 10px;
+            }
+            .channel img {
+                width: 50px;
+                height: 50px;
+            }
+            .channel-name { 
+                font-size: 10px; 
+                max-width: 50px; 
+            }
+            .category-btn { padding: 8px 20px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="player-container">
+        <div id="player"></div>
+    </div>
+
+    <div class="category-tabs">
+        <button class="category-btn active" onclick="filterCategory('tv')">ช่องทีวี</button>
+        <button class="category-btn" onclick="filterCategory('sports')">กีฬา</button>
+    </div>
+
+    <div class="channel-grid" id="channelGrid">
+        
+        <div class="channel" data-category="tv" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/5/5.mpd', '87db4361f7894655a4656e9c8b935a02', 'b025a4b950df41158a87cfc8d6f2ac34')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/ch5new.logo.png" alt="5 HD">
+            <div class="channel-name">5HD</div>
+        </div>
+        <div class="channel" data-category="tv" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/2/2.mpd', 'ca20a93cf8e3421dafbd5bdb1990081b', '86ae86a7391c481ea93eecdb740f0a14')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE//channelicon/0001.png" alt="Channel 2 Logo">
+            <div class="channel-name">NBT</div>
+        </div>
+        <div class="channel" data-category="tv" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/3/3.mpd', '4d4426a505f64382a9841155d721cee6', '0f4770219ccb4be5836a7517057e51c3')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/0014.png" alt="Channel 3 Logo">
+            <div class="channel-name">TPBS</div>
+        </div>
+        <div class="channel" data-category="tv" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/4/4.mpd', '1e98456bcbea44b7ad05831387e364ef', '3d14fd4f9d3149a79b35a7124fccbd67')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/ALTV.PNG" alt="ALTV Logo">
+            <div class="channel-name">ALTV</div>
+        </div>
+        <div class="channel" data-category="tv" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/10/10.mpd', '5da46688fd1e4ed5b085a12519b9dc4e', 'fd07bcf33823447180f53f6540f74ccb3')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/0048.png" alt="Channel 3 Logo">
+            <div class="channel-name">TPTV</div>
+        </div>
+        <div class="channel" data-category="tv" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/16/16.mpd', '9ebedc957e934d2b9023e4e60b97af73','7bcb4363df74457bbafedec1a864e6b6')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/R2_0053.png" alt="Channel 2 Logo">
+            <div class="channel-name">TNN16</div>
+        </div>
+        <div class="channel" data-category="tv" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/18/18.mpd', '333de6034a1d45fe91c829539caf1149','2710efc048ca44bba4c2b57397989a26')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE//channelicon/JKN18.png" alt="JKN18">
+            <div class="channel-name">JKN18</div>
+        </div>
+        <div class="channel" data-category="tv" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/22/22.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/0021.png" alt="Nation">
+            <div class="channel-name">Nation</div>
+        </div>
+        <div class="channel" data-category="tv" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/23/23.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon//0015_R.png" alt="Workpoint">
+            <div class="channel-name">Workpoint</div>
+        </div>
+        <div class="channel" data-category="tv" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/24/24.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/0054.png" alt="True4U">
+            <div class="channel-name">True4U</div>
+        </div>
+        <div class="channel" data-category="tv" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/25/25.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/0019.png" alt="GMM25">
+            <div class="channel-name">Gmm25</div>
+        </div>
+        <div class="channel" data-category="tv" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/27/27.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon//0006.png" alt="CH8">
+            <div class="channel-name">CH8</div>
+        </div>
+        <div class="channel" data-category="tv" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/29/29.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/0016.png" alt="Mono29">
+            <div class="channel-name">Mono29</div>
+        </div>
+        <div class="channel" data-category="tv" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/30/30.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/MCOT_new.png" alt="MCOT HD">
+            <div class="channel-name">McotHD</div>
+        </div>
+        <div class="channel" data-category="tv" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/31/31.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/0012.png" alt="ONE31">
+            <div class="channel-name">ONE31</div>
+        </div>
+        <div class="channel" data-category="tv" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/32/32.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/0013_R.png" alt="Thairath">
+            <div class="channel-name">ไทยรัฐ</div>
+        </div>
+        <div class="channel" data-category="tv" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/33/33.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/LOGO3HD.PNG" alt="3HD">
+            <div class="channel-name">3HD</div>
+        </div>
+        <div class="channel" data-category="tv" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/34/34.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/AmarinTV_NEW512.png" alt="Amarin">
+            <div class="channel-name">Amarintv</div>
+        </div>
+        <div class="channel" data-category="tv" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/35/35.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE//channelicon/0018.png" alt="7HD">
+            <div class="channel-name">7HD</div>
+        </div>
+        <div class="channel" data-category="tv" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/36/36.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/PPTV_2024e.jpg" alt="PPTV">
+            <div class="channel-name">PPTV</div>
+        </div>
+
+        <div class="channel" data-category="sports" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/7/7.mpd', '6187523f92b9475bb5b192f70cef1342', '5119311f482144d58dacabc5bc1fa4ba')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/T-SPorts_7_Final.png" alt="Sports 7 Logo">
+            <div class="channel-name">Sports 7</div>
+        </div>
+        <div class="channel" data-category="sports" onclick="changeChannel('https://cco-streamer1.cdn.3bbtv.com:8443/3bb/live/401/401.mpd','678bbba596584ad895d2923fb0255e82','c55471086c824112b217743a31abdf8f')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE///channelicon//3BBsports1_new.png" alt="3bbSport">
+            <div class="channel-name">3bbSport</div>
+        </div>
+        <div class="channel" data-category="sports" onclick="changeChannel('https://max01.mquanggiu290.workers.dev/chunks/max01_720.m3u8?token=' + generateToken('Max01'))">
+            <img src="https://placehold.co/100x100/333/FFF?text=MAX01" alt="Max01">
+            <div class="channel-name">Max01</div>
+        </div>
+        <div class="channel" data-category="sports" onclick="changeChannel('https://max02.mquanggiu290.workers.dev/chunks/max02_720.m3u8?token=' + generateToken('Max02'))">
+            <img src="https://placehold.co/100x100/333/FFF?text=MAX02" alt="Max02">
+            <div class="channel-name">Max02</div>
+        </div>
+        <div class="channel" data-category="sports" onclick="changeChannel('https://bein1.mquanggiu290.workers.dev/chunks/bein1_720.m3u8?token=' + generateToken('Bein1'))">
+            <img src="https://images.streamx-web.org/images/tv/png/epl-bein1.png" alt="BeIN 1">
+            <div class="channel-name">BeIN 1</div>
+        </div>
+        <div class="channel" data-category="sports" onclick="changeChannel('https://bein2.mquanggiu290.workers.dev/chunks/bein2_720.m3u8?token=' + generateToken('Bein2'))">
+            <img src="https://cms.dmpcdn.com/livetv/2023/07/24/5f346300-29cc-11ee-b2f4-e9de482d866e_webp_original.webp" alt="BeIN 2">
+            <div class="channel-name">BeIN 2</div>
+        </div>
+        <div class="channel" data-category="sports" onclick="changeChannel('https://bein3.mquanggiu290.workers.dev/chunks/bein3_720.m3u8?token=' + generateToken('Bein3'))">
+            <img src="https://cms.dmpcdn.com/livetv/2023/07/24/5fda18e0-29cc-11ee-846b-a1c4e5181c87_webp_original.webp" alt="BeIN 3">
+            <div class="channel-name">BeIN 3</div>
+        </div>
+
+        <div class="channel" data-category="sports" onclick="changeChannel('https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/7janu55dwc/out/v1/69a2a7041395406b970598f61680e7cf/cenc.mpd', 'e51aa21f2a0fef9aabc120dfb655b52f', 'a12a987fe725a40b6be95cd84b15f689')">
+            <img src="https://i.imgur.com/eRFE0jZ.png" alt="TSN 1">
+            <div class="channel-name">TSN 1</div>
+        </div>
+        <div class="channel" data-category="sports" onclick="changeChannel('https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/3n6slkgh54/out/v1/8977baf175da4b94873194613dd3fe55/cenc.mpd', 'daa8ea92553fd16cd6bfae2b8c582715', '4042e041b5639b79b69ae07a872eef9b')">
+            <img src="https://i.ibb.co/fzHfwF5j/TSN2.png" alt="TSN 2">
+            <div class="channel-name">TSN 2</div>
+        </div>
+        <div class="channel" data-category="sports" onclick="changeChannel('https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/lzhmuzmjsl/out/v1/c171eeb214c749f2b351c79df317b21e/cenc.mpd', 'f5c2b30eac11be1e8cdfc9585f5fe6af', 'a8198d17bf9b0da77450fbb919a38b2d')">
+            <img src="https://i.imgur.com/AYza8KO.png" alt="TSN 3">
+            <div class="channel-name">TSN 3</div>
+        </div>
+        <div class="channel" data-category="sports" onclick="changeChannel('https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/h9urpo3cwb/out/v1/fde190f369484bc6b6117cc16cd82a9f/cenc.mpd', 'c4088f5f265f9de50cffd80bf89308b7', '2c4d2239d96d532b4ec2050653611003')">
+            <img src="https://i.imgur.com/qJyAWU8.png" alt="TSN 4">
+            <div class="channel-name">TSN 4</div>
+        </div>
+        <div class="channel" data-category="sports" onclick="changeChannel('https://otte.cache.aiv-cdn.net/bom-nitro/clients/dash/enc/jkcljgqbx8/out/v1/63bfa701559340f3a2a2cb1fccd24807/cenc.mpd', 'e853333da2c9196ea11374634231bc45', 'de2e2dbe818d78dfad07d6cd9a4c63d4')">
+            <img src="https://i.imgur.com/HEzHpzz.png" alt="TSN 5">
+            <div class="channel-name">TSN 5</div>
+        </div>
+
+        <div class="channel" data-category="sports" onclick="changeChannel('https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/1080p-vtt/index.m3u8')">
+            <img src="https://i.ibb.co.com/9JJ04g9/1000284076.png" alt="Caze TV">
+            <div class="channel-name">Caze TV</div>
+        </div>
+        <div class="channel" data-category="sports" onclick="changeChannel('https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/Caze_TV.m3u8')">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpFVJGATy70KVBZ0txjIVDSVXTQUCSykt_5A&s" alt="CAZE TV 1">
+            <div class="channel-name">CAZE TV 1</div>
+        </div>
+        <div class="channel" data-category="sports" onclick="changeChannel('https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/3ynrpdanq2/out/v1/81fd4c26584044d2b1a1cc5b32fa9af0/cenc.mpd?amznDtid=AOAGZA014O5RE&encoding=segmentBase', '34475edab991ad5e92548aebd710410a', '501b209cccd323ac00bf5ac15b406cb4')">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpFVJGATy70KVBZ0txjIVDSVXTQUCSykt_5A&s" alt="CAZE TV 2">
+            <div class="channel-name">CAZE TV 2</div>
+        </div>
+        <div class="channel" data-category="sports" onclick="changeChannel('https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/epg9sw6owc/out/v1/e50aecefcb294fae85d6b343e0a6f1cc/cenc.mpd?amznDtid=AOAGZA014O5RE&encoding=segmentBase', '9752ef72590ef441ffa3731e0486fbc0', 'db63ec7b9f11348b7cc6808a54c99457')">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpFVJGATy70KVBZ0txjIVDSVXTQUCSykt_5A&s" alt="CAZE TV 3">
+            <div class="channel-name">CAZE TV 3</div>
+        </div>
+        <div class="channel" data-category="sports" onclick="changeChannel('https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash-sd/enc/hubonmgf5k/out/v1/10560d92577e4917973aa4624124ecd6/cenc-sd.mpd', '45bbd582f220f438f896450d8306a3f2', '582c6ba7f64bbc0f2d91c6b0c265760c')">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/DSports_logo_2022.svg/960px-DSports_logo_2022.svg.png?_=20240702054322" alt="DSPORTS">
+            <div class="channel-name">DSPORTS</div>
+        </div>
+        <div class="channel" data-category="sports" onclick="changeChannel('https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash-sd/enc/kp7qfx2tly/out/v1/bbfb730b45b74d4ea875d75786ea3f13/cenc-sd.mpd', '8afa490e1640be969729fb459182e4ec', '6f129820cdd5b6978a98c604c72cf05b')">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/DSports_logo_2022.svg/960px-DSports_logo_2022.svg.png?_=20240702054322" alt="DSPORTS+">
+            <div class="channel-name">DSPORTS+</div>
+        </div>
+        <div class="channel" data-category="sports" onclick="changeChannel('https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash-sd/enc/hufm7lgnhx/out/v1/5045630288d44123ba85427b2c36f29f/cenc-sd.mpd', '18044a84b7e6c1bbf852591797e53a2c', '38b3b6f8810917d89636927bddb79294')">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/DSports2.png" alt="DSPORTS 2">
+            <div class="channel-name">DSPORTS 2</div>
+        </div>
+        <div class="channel" data-category="sports" onclick="changeChannel('https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash-sd/enc/1a5vdd4i8j/out/v1/db14823b937045ac8b2b0effbcdded45/cenc-sd.mpd', '5f096c1f9e243b31ddc3bf4f5d88fc5f', '27334536d6077737b321c64663ebf59d')">
+            <img src="https://i.imgur.com/oT5CAvd.png" alt="TUDN">
+            <div class="channel-name">TUDN</div>
+        </div>
+        <div class="channel" data-category="sports" onclick="changeChannel('https://ott-balancer.tvri.go.id/live/eds/SportHD/hls/SportHD.m3u8')">
+            <img src="https://football-tribe.com/indonesia/wp-content/uploads/sites/10/2019/01/TVRI-Sport-HD.png" alt="TVRI SPORT">
+            <div class="channel-name">TVRI SPORT</div>
+        </div>
+
+        <div class="channel" data-category="sports" onclick="changeChannel('https://stream-proxy.shchenyu8810.workers.dev/?url=' + encodeURIComponent('http://starhub.pro/live/farhat-3379/67897-913379/3420.ts'))">
+            <img src="https://i.ibb.co.com/JFScp4g2/1000284128.png" alt="Fox Sports 1">
+            <div class="channel-name">Fox Sports 1</div>
+        </div>
+        <div class="channel" data-category="sports" onclick="changeChannel('https://stream-proxy.shchenyu8810.workers.dev/?url=' + encodeURIComponent('http://starhub.pro/live/farhat-3379/67897-913379/3421.ts'))">
+            <img src="https://i.ibb.co.com/CpxyjYHH/1000284129.png" alt="Fox Sports 2">
+            <div class="channel-name">Fox Sports 2</div>
+        </div>
+        <div class="channel" data-category="sports" onclick="changeChannel('https://stream-proxy.shchenyu8810.workers.dev/?url=' + encodeURIComponent('http://starhub.pro/live/farhat-3379/67897-913379/741567.ts'))">
+            <img src="https://i.ibb.co/k6KQwhFN/1000284104.png" alt="Unite8 Sports 1">
+            <div class="channel-name">Unite8 Sports 1</div>
+        </div>
+        <div class="channel" data-category="sports" onclick="changeChannel('https://stream-proxy.shchenyu8810.workers.dev/?url=' + encodeURIComponent('http://starhub.pro/live/farhat-3379/67897-913379/98841.ts'))">
+            <img src="https://i.ibb.co/S4DXyQkZ/1000284105.png" alt="Unite8 Sports 2">
+            <div class="channel-name">Unite8 Sports 2</div>
+        </div>
+
+    </div>
+
+    <div class="footer-credit">
+        © 2026 Super888 | Developed by [DONOK]
+    </div>
+
+    <script>
+        function filterCategory(category) {
+            const buttons = document.querySelectorAll('.category-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            const targetBtn = document.querySelector(`.category-btn[onclick="filterCategory('${category}')"]`);
+            if(targetBtn) {
+                targetBtn.classList.add('active');
+            }
+
+            const channels = document.querySelectorAll('.channel');
+            channels.forEach(channel => {
+                if (channel.getAttribute('data-category') === category) {
+                    channel.classList.remove('hidden');
+                } else {
+                    channel.classList.add('hidden');
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            filterCategory('tv');
+        });
+
+        // ฟังก์ชันสร้าง Token รวมเป็นตัวเดียว
+        function generateToken(channelName) {
+            var salt = "AutoRandom" + channelName + "_Salt"; 
+            var currentHour = Math.floor(Date.now() / 3600000);
+            var rawToken = salt + "_" + currentHour;
+            return btoa(rawToken).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+        }
+        
+        var playerInstance = jwplayer("player");
+
+        // อัปเดตฟังก์ชัน โหลดช่องให้รองรับ .ts
+        function changeChannel(file, keyId, key) {
+            
+            // เช็คว่าไฟล์ที่เข้ามาเป็น .mpd, .ts หรืออื่นๆ (m3u8)
+            var streamType = file.includes('.mpd') ? 'dash' : file.includes('.ts') ? 'mp4' : 'hls';
+
+            var sourceConfig = {
+                file: file,
+                type: streamType
+            };
+
+            if (keyId && key) {
+                sourceConfig.drm = {
+                    clearkey: {
+                        keyId: keyId,
+                        key: key
+                    }
+                };
+            }
+
+            playerInstance.load([sourceConfig]);
+            playerInstance.play();
+        }
+
+        // ตั้งค่าช่องแรกเริ่มต้น
+        playerInstance.setup({
+            playlist: [{
+                sources: [
+                    {
+                        type: "dash",
+                        file: 'https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/5/5.mpd',
+                        drm: {
+                            clearkey: {
+                                keyId: "87db4361f7894655a4656e9c8b935a02",
+                                key: "b025a4b950df41158a87cfc8d6f2ac34"
+                            }
+                        },
+                        label: "1080HD"
+                    }
+                ]
+            }],
+            width: "100%",
+            aspectratio: "16:9",
+            autostart: true,
+            mute: false
+        });
+    </script>
+</body>
+</html>
