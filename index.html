@@ -329,6 +329,10 @@
             <img src="https://placehold.co/100x100/333/FFF?text=MAX02" alt="Max02">
             <div class="channel-name">Max02</div>
         </div>
+        <div class="channel" data-category="sports" onclick="changeChannel('https://bein1.mquanggiu290.workers.dev/chunks/bein1_720.m3u8?token=' + generateBein1Token())">
+            <img src="https://images.streamx-web.org/images/tv/png/epl-bein1.png" alt="BeIN 1">
+            <div class="channel-name">BeIN 1</div>
+        </div>
 
     </div>
 
@@ -380,6 +384,14 @@
         // ฟังก์ชันสร้าง Token สำหรับ Max02
         function generateMax02Token() {
             var salt = "AutoRandomMax02_Salt"; 
+            var currentHour = Math.floor(Date.now() / 3600000);
+            var rawToken = salt + "_" + currentHour;
+            return btoa(rawToken).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+        }
+
+    // ฟังก์ชันสร้าง Token สำหรับ BeIN 1
+        function generateBein1Token() {
+            var salt = "AutoRandomBein1_Salt"; 
             var currentHour = Math.floor(Date.now() / 3600000);
             var rawToken = salt + "_" + currentHour;
             return btoa(rawToken).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
