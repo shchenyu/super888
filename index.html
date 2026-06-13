@@ -2,325 +2,336 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreeTV</title>
     
-    <meta name="referrer" content="no-referrer">
-    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
-    
-    <title>Premium Sports</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.12/dist/hls.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
-    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.compiled.min.js"></script>
+    <script defer data-domain="kitti2025.tiiny.site" src="https://analytics.tiiny.site/js/plausible.js"></script>
+    <script type="text/javascript" src="https://tiiny.host/ad-script.js"></script>
 
     <style>
-        :root {
-            --bg-dark: #0a0a0c; --bg-card: #18181c; --primary: #00ff88;
-            --primary-glow: rgba(0, 255, 136, 0.4); --text-main: #ffffff; --text-muted: #888890;
-            --plyr-color-main: var(--primary); --plyr-video-control-background-hover: rgba(0, 255, 136, 0.2);
-            --plyr-menu-background: var(--bg-card); --plyr-menu-color: var(--text-main);
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Kanit', 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
-
-        html, body {
-            width: 100vw; height: 100vh; height: 100dvh; overflow: hidden !important; 
-            touch-action: none; background-color: #000; color: var(--text-main);
-            display: flex; justify-content: center;
-        }
-
-        #app-container {
-            display: flex; flex-direction: column; width: 100%; max-width: 900px; 
-            height: 100%; background-color: var(--bg-dark); box-shadow: 0 0 50px rgba(0,0,0,0.5);
-        }
-
-        .player-wrapper {
-            width: 100%; flex-shrink: 0; max-height: 60vh; aspect-ratio: 16/9;
-            background: #000; position: relative; z-index: 50; display: flex;
-            align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        * {
+            box-sizing: border-box;
         }
         
-        .plyr { width: 100%; height: 100%; max-height: 60vh; }
-        .plyr__video-wrapper { height: 100%; background: #000; }
-        video { width: 100%; height: 100%; object-fit: contain; background: #000; }
-
-        .loader-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 99; transition: opacity 0.3s ease; gap: 20px;
-        }
-        .loader-overlay.hidden { opacity: 0; pointer-events: none; }
-        
-        .spinner {
-            width: 45px; height: 45px; border: 3px solid rgba(255,255,255,0.05);
-            border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
-        .status-text { color: var(--primary); font-size: 13px; letter-spacing: 1.5px; font-weight: 500; text-transform: uppercase; }
-
-        .content {
-            flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; touch-action: pan-y;
-            padding: 20px; padding-bottom: env(safe-area-inset-bottom, 30px);
+        body {
+            margin: 0;
+            padding: 20px 10px;
+            background-color: #050505;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        .content::-webkit-scrollbar { width: 6px; }
-        .content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-        
-        .section-title {
-            font-size: 18px; font-weight: 600; color: var(--text-muted); margin-bottom: 20px;
-            text-transform: uppercase; letter-spacing: 1.5px; border-left: 3px solid var(--primary); padding-left: 10px;
+        #player-container {
+            width: 100%;
+            max-width: 800px;
+            background-color: #000;
+            padding: 0; /* เอา padding ออกเพื่อให้ video ชิดขอบ */
+            border-radius: 12px;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+            overflow: hidden; /* ให้มุมโค้งของ container ครอบวิดีโอ */
+            margin-bottom: 20px;
+            aspect-ratio: 16 / 9;
         }
 
-        .channel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 15px; }
-        @media (min-width: 600px) { .channel-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); } }
-
-        .channel-card {
-            background: var(--bg-card); border: 1px solid rgba(255,255,255,0.03); border-radius: 12px;
-            padding: 20px 10px; cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; overflow: hidden;
+        #video-player {
+            width: 100%;
+            height: 100%;
+            display: block;
+            outline: none;
         }
-        
-        .channel-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.02); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        .channel-card:active { transform: scale(0.97); }
-        .channel-card.active { border-color: var(--primary); background: linear-gradient(145deg, rgba(0,255,136,0.05) 0%, rgba(24,24,28,1) 100%); box-shadow: 0 0 15px var(--primary-glow); }
 
-        .ch-icon {
-            width: 55px; height: 55px; background: rgba(255,255,255,0.03); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; margin-bottom: 15px;
-            border: 1px solid rgba(255,255,255,0.08); transition: all 0.3s ease; overflow: hidden; 
+        #logo-overlay {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 35px; 
+            height: 35px;
+            opacity: 0; /* เริ่มต้นด้วยซ่อนไว้ */
+            transition: opacity 0.5s ease-in-out;
+            pointer-events: none; /* ป้องกันไม่ให้โลโก้บังการกดปุ่มบนวิดีโอ */
+            z-index: 10;
+            display: none;
         }
-        .channel-card.active .ch-icon { border-color: var(--primary); box-shadow: 0 0 15px var(--primary-glow); transform: scale(1.05); }
 
-        .ch-logo-img { width: 100%; height: 100%; object-fit: contain; background-color: transparent; padding: 5px; }
-        .ch-icon-text { font-size: 22px; font-weight: 600; color: #fff; }
-        .channel-card.active .ch-icon-text { color: var(--primary); }
-
-        .ch-name { font-size: 14px; font-weight: 500; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main); }
-        .ch-type {
-            font-size: 11px; color: var(--text-muted); margin-top: 6px; background: rgba(255,255,255,0.05);
-            padding: 3px 10px; border-radius: 20px; text-transform: uppercase;
+        #logo-overlay img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
-        .channel-card.active .ch-type { color: var(--primary); background: rgba(0, 255, 136, 0.1); }
 
-        .error-toast {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px);
-            background: #ff3333; color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 500;
-            box-shadow: 0 5px 15px rgba(255, 51, 51, 0.3); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 1000; display: flex; align-items: center; gap: 8px;
+        .channel-grid {
+            display: grid;
+            /* ปรับจำนวนคอลัมน์อัตโนมัติ ตามขนาดหน้าจอ */
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 12px;
+            width: 100%;
+            max-width: 800px;
         }
-        .error-toast.show { transform: translateX(-50%) translateY(0); }
+
+        .channel {
+            text-align: center;
+            background-color: #1a1a1a;
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #333;
+        }
+
+        .channel:hover {
+            transform: scale(1.05);
+            background-color: #2a2a2a;
+            border-color: #555;
+        }
+
+        .channel img {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+            border-radius: 5px;
+        }
+
+        .channel-name {
+            color: #eee;
+            margin-top: 8px;
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+
+        /* ปรับแต่งสำหรับมือถือจอเล็ก */
+        @media (max-width: 480px) {
+            .channel-grid {
+                grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
+                gap: 8px;
+            }
+            .channel img {
+                width: 35px;
+                height: 35px;
+            }
+            .channel-name {
+                font-size: 10px;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <div id="app-container">
-        <div class="player-wrapper">
-            <div class="loader-overlay" id="loader">
-                <div class="spinner"></div>
-                <div class="status-text" id="status-text">กำลังเชื่อมต่อสัญญาณ...</div>
-            </div>
-            <video id="video-player" playsinline autoplay muted></video>
-        </div>
-
-        <div class="content">
-            <div class="section-title">Channels</div>
-            <div class="channel-grid" id="channel-list">
-            </div>
+    <div id="player-container">
+        <video id="video-player" controls autoplay playsinline></video>
+        <div id="logo-overlay">
+            <img src="https://img5.pic.in.th/file/secure-sv1/11zon_resized-3bb1f59abd215d288.png" alt="Logo">
         </div>
     </div>
 
-    <div class="error-toast" id="error-toast">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-        <span id="error-msg">ไม่สามารถโหลดสตรีมได้</span>
+    <div class="channel-grid">
+        <div class="channel" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/5/5.mpd', '87db4361f7894655a4656e9c8b935a02', 'b025a4b950df41158a87cfc8d6f2ac34')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/ch5new.logo.png" alt="5 HD">
+            <div class="channel-name">5HD</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/2/2.mpd', 'ca20a93cf8e3421dafbd5bdb1990081b', '86ae86a7391c481ea93eecdb740f0a14')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE//channelicon/0001.png" alt="Channel 2 Logo">
+            <div class="channel-name">NBT</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/3/3.mpd', '4d4426a505f64382a9841155d721cee6', '0f4770219ccb4be5836a7517057e51c3')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/0014.png" alt="Channel 3 Logo">
+            <div class="channel-name">TPBS</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/4/4.mpd', '1e98456bcbea44b7ad05831387e364ef', '3d14fd4f9d3149a79b35a7124fccbd67')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/ALTV.PNG" alt="ALTV Logo">
+            <div class="channel-name">ALTV</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/7/7.mpd', '6187523f92b9475bb5b192f70cef1342', '5119311f482144d58dacabc5bc1fa4ba')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/T-SPorts_7_Final.png" alt="Sports 7 Logo">
+            <div class="channel-name">Sports 7</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/10/10.mpd', '5da46688fd1e4ed5b085a12519b9dc4e', 'fd07bcf33823447180f53f6540f74ccb3')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/0048.png" alt="Channel 3 Logo">
+            <div class="channel-name">TPTV</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/16/16.mpd', '9ebedc957e934d2b9023e4e60b97af73','7bcb4363df74457bbafedec1a864e6b6')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/R2_0053.png" alt="Channel 2 Logo">
+            <div class="channel-name">TNN16</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/18/18.mpd', '333de6034a1d45fe91c829539caf1149','2710efc048ca44bba4c2b57397989a26')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE//channelicon/JKN18.png" alt="JKN18">
+            <div class="channel-name">JKN18</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/22/22.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/0021.png" alt="Nation">
+            <div class="channel-name">Nation</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/23/23.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon//0015_R.png" alt="Workpoint">
+            <div class="channel-name">Workpoint</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/24/24.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/0054.png" alt="True4U">
+            <div class="channel-name">True4U</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/25/25.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/0019.png" alt="GMM25">
+            <div class="channel-name">Gmm25</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/27/27.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon//0006.png" alt="CH8">
+            <div class="channel-name">CH8</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/29/29.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/0016.png" alt="Mono29">
+            <div class="channel-name">Mono29</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/30/30.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/MCOT_new.png" alt="MCOT HD">
+            <div class="channel-name">McotHD</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/31/31.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/0012.png" alt="ONE31">
+            <div class="channel-name">ONE31</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/32/32.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/0013_R.png" alt="Thairath">
+            <div class="channel-name">ไทยรัฐ</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/33/33.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/LOGO3HD.PNG" alt="3HD">
+            <div class="channel-name">3HD</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/34/34.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/AmarinTV_NEW512.png" alt="Amarin">
+            <div class="channel-name">Amarintv</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/35/35.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE//channelicon/0018.png" alt="7HD">
+            <div class="channel-name">7HD</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/36/36.mpd')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/PPTV_2024e.jpg" alt="PPTV">
+            <div class="channel-name">PPTV</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cco-streamer1.cdn.3bbtv.com:8443/3bb/live/101/101.mpd', 'dac6cbd9d17a451bb76386f52469e0e9','2e2ac52cadf843459915eaa1a9b95e48')">
+            <img src="https://img2.pic.in.th/pic/AsianHit.png" alt="AsianHit">
+            <div class="channel-name">AsianHiT</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cco-streamer1.cdn.3bbtv.com:8443/3bb/live/103/103.mpd', '9c5735afb4fd402580360aed8364469c','128d55d9ac2b47ad85f86b5d08320179')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE//channelicon/R_0148.png" alt="HBO HD">
+            <div class="channel-name">HBOHD</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cco-streamer1.cdn.3bbtv.com:8443/3bb/live/104/104.mpd', '0db89bae851440a5994f5893ad480494','d88ef77eaedf4451a65be2e0bf6eabde')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon//0149.png" alt="HBO Sig">
+            <div class="channel-name">HBOSig</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cco-streamer1.cdn.3bbtv.com:8443/3bb/live/105/105.mpd', '7c04b8e7aa524afea879b2ed1aef8242','91e72b75fcb94c3bb36cceb741afd621')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon//0151.png" alt="HBO Hits">
+            <div class="channel-name">HBOhit</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cco-streamer1.cdn.3bbtv.com:8443/3bb/live/106/106.mpd', '07b138f30ad3441ca5a2f476e550af25','826ee4deef4b45cfafd5f79a591b15c6')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/0150.png" alt="HBO Fam">
+            <div class="channel-name">HBOfam</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cco-streamer1.cdn.3bbtv.com:8443/3bb/live/107/107.mpd', 'f48caba466394e93b50780f21798787a','9a074a10db4342e7937076b3e52f6029')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE//channelicon/0147.png" alt="Cinemax">
+            <div class="channel-name">Cinemax</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cco-streamer1.cdn.3bbtv.com:8443/3bb/live/302/302.mpd', 'ad2371259d34404cb89d54a4dc88dcd3','1ba155e345c4456ba891cbee9b3e1c4c')">
+            <img src="https://58-64-52-73-rewriter.ais-vidnt.com/ais/play/origin/LIVE/channelicon//Cartoonito.png" alt="Cartoonito">
+            <div class="channel-name">Cartoonito</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cco-streamer1.cdn.3bbtv.com:8443/3bb/live/304/304.mpd', '641c3f0e676d49d18c2082e093380e69','e06f3a2e327643249c3831ab199c4015')">
+            <img src="https://58-64-52-73-rewriter.ais-vidnt.com/ais/play/origin/LIVE//channelicon/0156.png" alt="Nick Jr">
+            <div class="channel-name">Nick Jr</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cco-streamer1.cdn.3bbtv.com:8443/3bb/live/303/303.mpd', '9130a6448a74430794d355b48b56a64c','c2f4d3288cdb43cf81e519ceb414dd6f')">
+            <img src="https://58-64-52-73-rewriter.ais-vidnt.com/ais/play/origin/LIVE//channelicon/LOGO_Nickelodeon2.png" alt="Nickelodeon">
+            <div class="channel-name">Nickelodeon</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://udn-streamer1.cdn.3bbtv.com:8443/3bb/live/301/301.mpd','f140b94c73ab4ef5b96da7f49afb1154','85e4ef232c6e460f888eb20f651d66e3')">
+            <img src="https://58-64-52-73-rewriter.ais-vidnt.com/ais/play/origin/LIVE///channelicon//0171.png" alt="CN">
+            <div class="channel-name">CN</div>
+        </div>
+        <div class="channel" onclick="changeChannel('https://cco-streamer1.cdn.3bbtv.com:8443/3bb/live/401/401.mpd','678bbba596584ad895d2923fb0255e82','c55471086c824112b217743a31abdf8f')">
+            <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE///channelicon//3BBsports1_new.png" alt="3bbSport">
+            <div class="channel-name">3bbSport</div>
+        </div>
     </div>
 
     <script>
-        // 🔥 นี่คือหัวใจสำคัญ: ชี้ไปที่ Worker ตัวใหม่พร้อมสแลชปิดท้าย
-        const PROXY_BASE = 'https://livesportproxy.shchenyu8810.workers.dev/';
+        document.addEventListener('DOMContentLoaded', initApp);
 
-        const channels = [
-            { id: 'epl1', name: 'EPL 1', url: 'https://www.livedoomovies.com:4431/02_epl1_720p/playlist.m3u8', type: 'FHD', logo: '' },
-            { id: 'epl2', name: 'EPL 2', url: 'https://www.livedoomovies.com:4431/02_epl2_720p/playlist.m3u8', type: 'FHD', logo: '' },
-            { id: 'epl3', name: 'EPL 3', url: 'https://www.livedoomovies.com:4431/02_epl3_720p/playlist.m3u8', type: 'FHD', logo: '' },
-            { id: 'b1', name: 'MONO29', url: 'https://raw.githubusercontent.com/lancerza/Kacper/refs/heads/main/PiotrK/tv/momax1.m3u8', type: '', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-mono.png' },
-            { id: 'b2', name: 'MAX01', url: 'https://apiiptv.lnwthailive.online/api/play/stream.m3u8?c=th-max01', type: '', logo: 'https://lnwthailive.online/uploads/iptv/channel_4379572.webp?v=1780592747515.9436' },
-            { id: 'b3', name: 'MAX02', url: 'https://apiiptv.lnwthailive.online/api/play/stream.m3u8?c=th-max02', type: 'FHD', logo: 'https://lnwthailive.online/uploads/iptv/channel_4379571.webp?v=1780592756140.9497' }
-        ];
+        function initApp() {
+            shaka.polyfill.installAll();
+            if (shaka.Player.isBrowserSupported()) {
+                initPlayer();
+            } else {
+                console.error('Browser not supported!');
+            }
+        }
 
-        let hls = null;
-        const video = document.getElementById('video-player');
-        const loader = document.getElementById('loader');
-        const statusText = document.getElementById('status-text');
-        const errorToast = document.getElementById('error-toast');
-        let errorTimeout;
+        function initPlayer() {
+            var video = document.getElementById('video-player');
+            window.player = new shaka.Player(video);
 
-        const player = new Plyr(video, {
-            controls: ['play-large', 'play', 'mute', 'volume', 'fullscreen'], 
-            autoplay: true,
-            muted: true,
-            ratio: '16:9'
-        });
-
-        function renderChannels() {
-            const container = document.getElementById('channel-list');
-            container.innerHTML = '';
-
-            channels.forEach((ch) => {
-                const card = document.createElement('div');
-                card.className = 'channel-card';
-                card.id = 'card-' + ch.id;
-                
-                let iconHtml = '';
-                if (ch.logo && ch.logo.trim() !== '') {
-                    iconHtml = '<img src="' + ch.logo + '" class="ch-logo-img" alt="' + ch.name + '">';
-                } else {
-                    const shortName = ch.name.replace(/[^0-9]/g, '');
-                    const iconText = shortName ? shortName : ch.name.charAt(0);
-                    iconHtml = '<div class="ch-icon-text">' + iconText + '</div>';
-                }
-
-                card.innerHTML = '<div class="ch-icon">' + iconHtml + '</div>' +
-                                 '<div class="ch-name">' + ch.name + '</div>' +
-                                 '<div class="ch-type">' + ch.type + '</div>';
-
-                card.onclick = () => playStream(ch.url, ch.id);
-                container.appendChild(card);
+            window.player.addEventListener('error', function(event) {
+                console.error('Error code', event.detail.code, 'object', event.detail);
             });
 
-            if(channels.length > 0) {
-                playStream(channels[0].url, channels[0].id);
-            }
+            // เปิดมาเจอช่อง 5HD
+            changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/5/5.mpd', '87db4361f7894655a4656e9c8b935a02', 'b025a4b950df41158a87cfc8d6f2ac34');
         }
 
-        function playStream(url, channelId) {
-            document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
-            const activeCard = document.getElementById('card-' + channelId);
-            if(activeCard) activeCard.classList.add('active');
+        function changeChannel(file, keyId, key) {
+            if (!window.player) return;
 
-            loader.classList.remove('hidden');
-            statusText.innerText = 'กำลังเชื่อมต่อสัญญาณ...';
+            // ตั้งค่าพื้นฐานสำหรับ Source
+            var config = {
+                drm: { clearKeys: {} }
+            };
 
-            player.stop(); 
-            if (hls) {
-                hls.destroy();
-                hls = null;
+            // ถ้ามีการส่ง keyId และ key มาด้วย แสดงว่าเป็นช่องที่เข้ารหัส (DRM)
+            if (keyId && key) {
+                config.drm.clearKeys[keyId] = key;
             }
-            video.pause();
-            video.removeAttribute('src'); 
-            video.load();
 
-            if (Hls.isSupported()) {
-                const targetUrl = PROXY_BASE + url;
+            window.player.configure(config);
 
-                const currentHls = new Hls({
-                    enableWorker: true,
-                    lowLatencyMode: false,
-                    backBufferLength: 90,
-                    maxBufferLength: 60, 
-                    maxMaxBufferLength: 600, 
-                    liveSyncDurationCount: 6,
-                    
-                    // ดักจับทุกลิงก์ย่อยให้วิ่งเข้า Worker ตัวใหม่แบบตรงๆ ไม่ต้องมี /proxy/
-                    xhrSetup: function(xhr, u) {
-                        let finalUrl = u;
-                        if (u.startsWith('http') && !u.includes('livesportproxy.shchenyu8810.workers.dev')) {
-                            finalUrl = PROXY_BASE + u;
-                        }
-                        xhr.open('GET', finalUrl, true);
-                    }
+            // โหลดช่องใหม่
+            window.player.load(file).then(function() {
+                var video = document.getElementById('video-player');
+                video.play().catch(function(e) {
+                    console.log('Autoplay prevented', e);
                 });
+
+                // แสดง Logo
+                var logoOverlay = document.getElementById('logo-overlay');
+                logoOverlay.style.display = 'block';
                 
-                hls = currentHls;
-                currentHls.networkRetryCount = 0;
+                setTimeout(() => {
+                    logoOverlay.style.opacity = '0.7';
+                }, 10);
 
-                currentHls.loadSource(targetUrl);
-                currentHls.attachMedia(video);
-
-                currentHls.on(Hls.Events.MANIFEST_PARSED, function () {
-                    player.play().catch(e => {
-                        player.muted = true;
-                        player.play();
-                    });
-                });
-
-                currentHls.on(Hls.Events.ERROR, function (event, data) {
-                    if (data.fatal) {
-                        switch (data.type) {
-                            case Hls.ErrorTypes.NETWORK_ERROR:
-                                if (currentHls.networkRetryCount < 3) {
-                                    currentHls.networkRetryCount++;
-                                    setTimeout(() => {
-                                        if (hls === currentHls) currentHls.startLoad();
-                                    }, 1000);
-                                } else {
-                                    currentHls.destroy();
-                                    showError('เป้าหมายบล็อกการดึงข้อมูล หรือสตรีมออฟไลน์');
-                                    loader.classList.add('hidden'); 
-                                }
-                                break;
-                            case Hls.ErrorTypes.MEDIA_ERROR:
-                                currentHls.recoverMediaError();
-                                break;
-                            default:
-                                currentHls.destroy();
-                                showError('สตรีมออฟไลน์ หรือลิงก์เสีย');
-                                loader.classList.add('hidden');
-                                break;
-                        }
-                    } else if (data.details === Hls.ErrorDetails.BUFFER_STALLED_ERROR) {
-                        loader.classList.remove('hidden');
-                        statusText.innerText = 'กำลังโหลดข้อมูล...';
-                    }
-                });
-
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = PROXY_BASE + url;
-                video.onloadedmetadata = function () {
-                    player.play().catch(e => {
-                        player.muted = true;
-                        player.play();
-                    });
-                };
-                video.onerror = function() {
-                    showError('ไม่สามารถเล่นวิดีโอนี้ได้');
-                    loader.classList.add('hidden');
-                };
-            } else {
-                showError('เบราว์เซอร์ไม่รองรับ');
-                loader.classList.add('hidden');
-            }
+                setTimeout(() => {
+                    logoOverlay.style.opacity = '0';
+                    setTimeout(() => {
+                        logoOverlay.style.display = 'none';
+                    }, 500);
+                }, 5000);
+            }).catch(function(e) {
+                console.error('Error loading video', e);
+            });
         }
-
-        function showError(msg) {
-            const msgEl = document.getElementById('error-msg');
-            msgEl.innerText = msg;
-            errorToast.classList.add('show');
-            clearTimeout(errorTimeout);
-            errorTimeout = setTimeout(() => {
-                errorToast.classList.remove('show');
-            }, 4000);
-        }
-
-        const hideLoader = () => loader.classList.add('hidden');
-        
-        player.on('waiting', () => {
-            if (!video.paused) {
-                statusText.innerText = 'กำลังโหลดข้อมูล...';
-                loader.classList.remove('hidden');
-            }
-        });
-        
-        player.on('playing', hideLoader);
-        player.on('canplay', hideLoader);
-        player.on('pause', hideLoader);
-        player.on('error', hideLoader);
-
     </script>
 </body>
 </html>
