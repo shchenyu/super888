@@ -172,7 +172,8 @@
     <div id="player-container">
         <div id="jw-wrapper"><div id="player"></div></div>
         
-        <video id="ts-player" controls autoplay></video>
+        <!-- เพิ่ม muted เพื่อให้เบราว์เซอร์อนุญาต autoplay ทันที -->
+        <video id="ts-player" controls autoplay muted></video>
     </div>
 
     <div class="category-tabs">
@@ -509,23 +510,24 @@
                 // สั่งหยุด JW Player ก่อน
                 try { if (playerInstance.getState() === 'playing') playerInstance.stop(); } catch(e){}
 
-                // เคลียร์ไฟล์ TS เดิมที่เคยเล่น (ถ้ามี)
+                // เคลียร์ไฟล์ TS เดิมที่เคยเล่นให้สะอาดหมดจด (แก้บั๊กเสียงผีหลอก)
                 if (tsPlayerInstance) {
+                    tsPlayer.pause(); 
+                    tsPlayer.removeAttribute('src'); 
+                    tsPlayer.load(); 
                     tsPlayerInstance.destroy();
                     tsPlayerInstance = null;
                 }
 
-                // --- ส่วนที่ปรับปรุงแก้ไข ---
-                // เริ่มเล่นผ่าน mpegts พร้อมระบบลบ Buffer และ Auto-Reconnect
                 if (mpegts.getFeatureList().mseLivePlayback) {
                     tsPlayerInstance = mpegts.createPlayer({
                         type: 'mpegts',
                         isLive: true,
                         url: file
                     }, {
-                        enableStashBuffer: true,        // ปิดการดองข้อมูล ลดดีเลย์
-                        liveBufferLatencyChasing: false,  // บังคับไล่ตามเวลาจริง
-                        autoCleanupSourceBuffer: true,   // ล้าง Buffer อัตโนมัติ ป้องกันค้าง
+                        enableStashBuffer: true,        
+                        liveBufferLatencyChasing: false,  
+                        autoCleanupSourceBuffer: true,   
                         autoCleanupMaxBackwardDuration: 60,
                         autoCleanupMinBackwardDuration: 30
                     });
@@ -533,14 +535,22 @@
                     tsPlayerInstance.attachMediaElement(tsPlayer);
                     tsPlayerInstance.load();
                     
-                    // ดักจับ Error และสั่งเชื่อมต่อใหม่เอง
+                    // แก้บั๊ก Infinite Loop: หน่วงเวลา 3 วินาทีก่อนต่อใหม่
                     tsPlayerInstance.on(mpegts.Events.ERROR, (errorType, errorDetail, errorInfo) => {
                         console.warn("MPEG-TS Error:", errorType, errorDetail);
                         if (tsPlayerInstance) {
                             tsPlayerInstance.pause();
                             tsPlayerInstance.unload();
-                            tsPlayerInstance.load();
-                            tsPlayerInstance.play().catch(e => console.error("Reconnect Error:", e));
+                            
+                            // รอ 3 วินาที (3000ms) แล้วค่อยดึงสัญญาณใหม่
+                            setTimeout(() => {
+                                // เช็คอีกรอบว่า user ไม่ได้กดเปลี่ยนช่องหนีไปแล้ว
+                                if (tsPlayerInstance && currentPlayingFile === file) {
+                                    console.log("Reconnecting TS Stream...");
+                                    tsPlayerInstance.load();
+                                    tsPlayerInstance.play().catch(e => console.error("Reconnect Error:", e));
+                                }
+                            }, 3000);
                         }
                     });
 
@@ -548,7 +558,6 @@
                 } else {
                     console.error("เบราว์เซอร์นี้ไม่รองรับ mpegts.js");
                 }
-                // -----------------------------------------
 
             } else {
                 // -----------------------------------------
@@ -557,8 +566,11 @@
                 jwWrapper.style.display = 'block';
                 tsPlayer.style.display = 'none';
                 
-                // สั่งหยุดและทำลาย mpegts (เพื่อไม่ให้สูบอินเทอร์เน็ต)
+                // เคลียร์ไฟล์ TS เดิมให้สะอาดหมดจดก่อนสลับ
                 if (tsPlayerInstance) {
+                    tsPlayer.pause(); 
+                    tsPlayer.removeAttribute('src'); 
+                    tsPlayer.load(); 
                     tsPlayerInstance.destroy();
                     tsPlayerInstance = null;
                 }
