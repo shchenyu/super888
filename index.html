@@ -107,13 +107,12 @@
             width: 100%;
         }
 
-        /* โค้ด CSS สำหรับข้อความเครดิต */
         .footer-credit {
-            margin-top: auto; /* ดันข้อความไปล่างสุดเสมอ */
+            margin-top: auto;
             padding: 30px 10px 10px 10px;
             text-align: center;
             width: 100%;
-            color: #888; /* สีเทาเข้ม ไม่แย่งซีนวิดีโอ */
+            color: #888;
             font-size: 12px;
         }
 
@@ -270,6 +269,10 @@
             <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE///channelicon//3BBsports1_new.png" alt="3bbSport">
             <div class="channel-name">3bbSport</div>
         </div>
+        <div class="channel" onclick="changeChannel('https://apiiptv.lnwthailive.online/api/play/stream.m3u8?c=th-max02')">
+    <img src="ลิงก์รูปภาพโลโก้" alt="ชื่อช่อง">
+    <div class="channel-name">mono</div>
+</div>
     </div>
 
     <div class="footer-credit">
@@ -281,11 +284,15 @@
 
         function changeChannel(file, keyId, key) {
             
+            // เช็คว่านามสกุลไฟล์เป็น .m3u8 หรือไม่ ถ้าใช่ให้เป็น hls ถ้าไม่ใช่ให้เป็น dash
+            var streamType = file.includes('.m3u8') ? 'hls' : 'dash';
+
             var sourceConfig = {
                 file: file,
-                type: "dash"
+                type: streamType
             };
 
+            // ใส่ DRM เฉพาะเมื่อมี keyId และ key ส่งมาด้วย
             if (keyId && key) {
                 sourceConfig.drm = {
                     clearkey: {
