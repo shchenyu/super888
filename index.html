@@ -7,13 +7,11 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap" rel="stylesheet">
     
-    <!-- นำเข้า JW Player (สำหรับ DASH / HLS) -->
     <script src="https://ssl.p.jwpcdn.com/player/v/8.26.0/jwplayer.js"></script>
     <script>
         jwplayer.key = 'XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo';
     </script>
 
-    <!-- นำเข้า mpegts.js (สำหรับเล่น MPEG-TS .ts) -->
     <script src="https://cdn.jsdelivr.net/npm/mpegts.js@1.7.3/dist/mpegts.min.js"></script>
 
     <style>
@@ -55,32 +53,7 @@
             height: 100%;
             display: none;
             outline: none;
-        }
-
-        /* 💡 สร้างตัวหมุนโหลด (Custom Spinner) */
-        #custom-loader {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255, 255, 255, 0.2);
-            border-top: 4px solid #fff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            z-index: 10; /* ให้อยู่บนสุด */
-            display: none; /* ซ่อนไว้เป็นค่าเริ่มต้น */
-            pointer-events: none; /* ไม่ให้ขัดขวางการคลิกบนจอวิดีโอ */
-        }
-
-        @keyframes spin {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-
-        #custom-loader.active {
-            display: block; /* สั่งให้โชว์ */
+            background-color: #000;
         }
 
         .category-tabs {
@@ -197,14 +170,9 @@
 <body>
 
     <div id="player-container">
-        <!-- ห่อ JW Player ไว้ใน div -->
         <div id="jw-wrapper"><div id="player"></div></div>
         
-        <!-- แท็ก Video สำหรับไฟล์ TS บังคับพื้นหลังให้เป็นสีดำสนิท -->
-        <video id="ts-player" controls autoplay style="background-color: #000 !important;"></video>
-        
-        <!-- เพิ่มกล่องตัวหมุนโหลดที่นี่ -->
-        <div id="custom-loader"></div>
+        <video id="ts-player" controls autoplay></video>
     </div>
 
     <div class="category-tabs">
@@ -214,7 +182,6 @@
 
     <div class="channel-grid" id="channelGrid">
         
-        <!-- หมวดหมู่: ช่องทีวี -->
         <div class="channel" data-category="tv" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/5/5.mpd', '87db4361f7894655a4656e9c8b935a02', 'b025a4b950df41158a87cfc8d6f2ac34')">
             <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/ch5new.logo.png" alt="5 HD" loading="lazy">
             <div class="channel-name">5HD</div>
@@ -336,7 +303,6 @@
             <div class="channel-name">CN</div>
         </div>
 
-        <!-- หมวดหมู่: กีฬา -->
         <div class="channel" data-category="sports" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/7/7.mpd', '6187523f92b9475bb5b192f70cef1342', '5119311f482144d58dacabc5bc1fa4ba')">
             <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE/channelicon/T-SPorts_7_Final.png" alt="Sports 7 Logo" loading="lazy">
             <div class="channel-name">Sports 7</div>
@@ -423,7 +389,6 @@
             <div class="channel-name">TVRI SPORT</div>
         </div>
 
-        <!-- 💡 ไฟล์ .ts (หมายเหตุ: http:// อาจโดนบล็อกใน Vercel/HTTPS ให้หาลิงก์ https:// มาเปลี่ยนหากต้องการให้ใช้งานได้สาธารณะ) -->
         <div class="channel" data-category="sports" onclick="changeChannel('http://starhub.pro/live/farhat-3379/67897-913379/3420.ts')">
             <img src="https://i.ibb.co.com/JFScp4g2/1000284128.png" alt="Fox Sports 1" loading="lazy">
             <div class="channel-name">Fox Sports 1</div>
@@ -449,7 +414,7 @@
 
     <script>
         let currentPlayingFile = ''; 
-        let tsPlayerInstance = null; 
+        let tsPlayerInstance = null; // เก็บ Instance สำหรับการเล่น TS
 
         function filterCategory(category) {
             const buttons = document.querySelectorAll('.category-btn');
@@ -528,26 +493,29 @@
             if (file === currentPlayingFile) return;
             currentPlayingFile = file;
 
+            // ตรวจสอบว่าไฟล์เป็นนามสกุล .ts หรือไม่
             var isMpegTs = /\.ts(\?|$)/i.test(file);
             
             const jwWrapper = document.getElementById('jw-wrapper');
             const tsPlayer = document.getElementById('ts-player');
-            const customLoader = document.getElementById('custom-loader');
 
             if (isMpegTs) {
+                // -----------------------------------------
+                // โหมดเล่นไฟล์ MPEG-TS (.ts) ผ่าน mpegts.js
+                // -----------------------------------------
                 jwWrapper.style.display = 'none';
                 tsPlayer.style.display = 'block';
                 
-                // โชว์ตัวหมุนทันทีที่กดเปลี่ยนช่อง
-                customLoader.classList.add('active');
-
+                // สั่งหยุด JW Player ก่อน
                 try { if (playerInstance.getState() === 'playing') playerInstance.stop(); } catch(e){}
 
+                // เคลียร์ไฟล์ TS เดิมที่เคยเล่น (ถ้ามี)
                 if (tsPlayerInstance) {
                     tsPlayerInstance.destroy();
                     tsPlayerInstance = null;
                 }
 
+                // เริ่มเล่นผ่าน mpegts
                 if (mpegts.getFeatureList().mseLivePlayback) {
                     tsPlayerInstance = mpegts.createPlayer({
                         type: 'mpegts',
@@ -556,27 +524,19 @@
                     });
                     tsPlayerInstance.attachMediaElement(tsPlayer);
                     tsPlayerInstance.load();
-                    tsPlayerInstance.play().catch(e => {
-                        console.error("MPEG-TS Play Error:", e);
-                        customLoader.classList.remove('active'); // ซ่อนถ้าเล่นพลาด
-                    });
-
-                    // ดักจับเหตุการณ์ของวิดีโอเพื่อซ่อน/แสดงตัวหมุน
-                    tsPlayer.onwaiting = () => customLoader.classList.add('active'); // กำลังโหลด/กระตุก ให้หมุน
-                    tsPlayer.onplaying = () => customLoader.classList.remove('active'); // เล่นได้แล้ว ให้ซ่อน
-                    tsPlayer.oncanplay = () => customLoader.classList.remove('active'); 
-                    tsPlayer.onerror = () => customLoader.classList.remove('active'); 
-
+                    tsPlayerInstance.play().catch(e => console.error("MPEG-TS Play Error:", e));
                 } else {
                     console.error("เบราว์เซอร์นี้ไม่รองรับ mpegts.js");
-                    customLoader.classList.remove('active');
                 }
 
             } else {
+                // -----------------------------------------
+                // โหมดเล่นไฟล์ปกติ (DASH / HLS) ผ่าน JW Player
+                // -----------------------------------------
                 jwWrapper.style.display = 'block';
                 tsPlayer.style.display = 'none';
-                customLoader.classList.remove('active'); // ซ่อนตัวหมุนตอนใช้ JW Player
                 
+                // สั่งหยุดและทำลาย mpegts (เพื่อไม่ให้สูบอินเทอร์เน็ต)
                 if (tsPlayerInstance) {
                     tsPlayerInstance.destroy();
                     tsPlayerInstance = null;
