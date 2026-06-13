@@ -320,6 +320,10 @@
             <img src="https://images.streamx-web.org/images/tv/png/epl-bein1.png" alt="BeIN 1">
             <div class="channel-name">BeIN 1</div>
         </div>
+                <div class="channel" data-category="sports" onclick="changeChannel('https://bein2.mquanggiu290.workers.dev/chunks/bein2_720.m3u8?token=' + generateBein1Token())">
+            <img src="https://images.streamx-web.org/images/tv/png/epl-bein1.png" alt="BeIN 2">
+            <div class="channel-name">BeIN 2</div>
+        </div>
 
     </div>
 
@@ -376,6 +380,13 @@
             return btoa(rawToken).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
         }
 
+        function generateBein1Token() {
+            var salt = "AutoRandomBein2_Salt"; 
+            var currentHour = Math.floor(Date.now() / 3600000);
+            var rawToken = salt + "_" + currentHour;
+            return btoa(rawToken).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+        }
+        
         var playerInstance = jwplayer("player");
 
         function changeChannel(file, keyId, key) {
