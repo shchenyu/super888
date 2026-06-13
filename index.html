@@ -523,8 +523,8 @@
                         isLive: true,
                         url: file
                     }, {
-                        enableStashBuffer: false,        // ปิดการดองข้อมูล ลดดีเลย์
-                        liveBufferLatencyChasing: true,  // บังคับไล่ตามเวลาจริง
+                        enableStashBuffer: true,        // ปิดการดองข้อมูล ลดดีเลย์
+                        liveBufferLatencyChasing: false,  // บังคับไล่ตามเวลาจริง
                         autoCleanupSourceBuffer: true,   // ล้าง Buffer อัตโนมัติ ป้องกันค้าง
                         autoCleanupMaxBackwardDuration: 60,
                         autoCleanupMinBackwardDuration: 30
