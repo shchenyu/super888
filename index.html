@@ -330,23 +330,20 @@
             <div class="channel-name">TVRI SPORT</div>
         </div>
 
-<div class="channel" data-category="sports" onclick="changeChannel('https://stream-proxy.shchenyu8810.workers.dev/?url=' + encodeURIComponent('http://starhub.pro/live/farhat-3379/67897-913379/3420.m3u8'))">
+        <div class="channel" data-category="sports" onclick="changeChannel('https://stream-proxy.shchenyu8810.workers.dev/?url=' + encodeURIComponent('http://starhub.pro/live/farhat-3379/67897-913379/3420.ts'))">
             <img src="https://i.ibb.co.com/JFScp4g2/1000284128.png" alt="Fox Sports 1">
             <div class="channel-name">Fox Sports 1</div>
         </div>
-
-        <div class="channel" data-category="sports" onclick="changeChannel('https://stream-proxy.shchenyu8810.workers.dev/?url=' + encodeURIComponent('http://starhub.pro/live/farhat-3379/67897-913379/3421.m3u8'))">
+        <div class="channel" data-category="sports" onclick="changeChannel('https://stream-proxy.shchenyu8810.workers.dev/?url=' + encodeURIComponent('http://starhub.pro/live/farhat-3379/67897-913379/3421.ts'))">
             <img src="https://i.ibb.co.com/CpxyjYHH/1000284129.png" alt="Fox Sports 2">
             <div class="channel-name">Fox Sports 2</div>
         </div>
-
-        <div class="channel" data-category="sports" onclick="changeChannel('https://stream-proxy.shchenyu8810.workers.dev/?url=' + encodeURIComponent('http://starhub.pro/live/farhat-3379/67897-913379/741567.m3u8'))">
+        <div class="channel" data-category="sports" onclick="changeChannel('https://stream-proxy.shchenyu8810.workers.dev/?url=' + encodeURIComponent('http://starhub.pro/live/farhat-3379/67897-913379/741567.ts'))">
             <img src="https://i.ibb.co/k6KQwhFN/1000284104.png" alt="Unite8 Sports 1">
             <div class="channel-name">Unite8 Sports 1</div>
         </div>
-
-        <div class="channel" data-category="sports" onclick="changeChannel('https://stream-proxy.shchenyu8810.workers.dev/?url=' + encodeURIComponent('http://starhub.pro/live/farhat-3379/67897-913379/98841.m3u8'))">
-            <img src="https://i.ibb.co.com/S4DXyQkZ/1000284105.png" alt="Unite8 Sports 2">
+        <div class="channel" data-category="sports" onclick="changeChannel('https://stream-proxy.shchenyu8810.workers.dev/?url=' + encodeURIComponent('http://starhub.pro/live/farhat-3379/67897-913379/98841.ts'))">
+            <img src="https://i.ibb.co/S4DXyQkZ/1000284105.png" alt="Unite8 Sports 2">
             <div class="channel-name">Unite8 Sports 2</div>
         </div>
 
@@ -390,10 +387,11 @@
         
         var playerInstance = jwplayer("player");
 
-function changeChannel(file, keyId, key) {
+        // อัปเดตฟังก์ชัน โหลดช่องให้รองรับ .ts
+        function changeChannel(file, keyId, key) {
             
-            // ปรับกลับมาแค่นี้พอ เพราะลิงก์ถูกแปลงเป็น HLS (.m3u8) หมดแล้ว
-            var streamType = file.includes('.mpd') ? 'dash' : 'hls';
+            // เช็คว่าไฟล์ที่เข้ามาเป็น .mpd, .ts หรืออื่นๆ (m3u8)
+            var streamType = file.includes('.mpd') ? 'dash' : file.includes('.ts') ? 'mp4' : 'hls';
 
             var sourceConfig = {
                 file: file,
