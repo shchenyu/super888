@@ -6,7 +6,10 @@
     <title>FreeTV</title>
     
     <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.compiled.min.js"></script>
+    <script src="//ssl.p.jwpcdn.com/player/v/8.26.0/jwplayer.js"></script>
+    <script>
+        jwplayer.key = 'XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo';
+    </script>
     <script defer data-domain="kitti2025.tiiny.site" src="https://analytics.tiiny.site/js/plausible.js"></script>
     <script type="text/javascript" src="https://tiiny.host/ad-script.js"></script>
 
@@ -30,21 +33,17 @@
         #player-container {
             width: 100%;
             max-width: 800px;
-            background-color: #000;
+            background-color: #111;
             padding: 0; /* เอา padding ออกเพื่อให้ video ชิดขอบ */
             border-radius: 12px;
             position: relative;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
             overflow: hidden; /* ให้มุมโค้งของ container ครอบวิดีโอ */
             margin-bottom: 20px;
-            aspect-ratio: 16 / 9;
         }
 
-        #video-player {
+        #player {
             width: 100%;
-            height: 100%;
-            display: block;
-            outline: none;
         }
 
         #logo-overlay {
@@ -131,7 +130,7 @@
 <body>
 
     <div id="player-container">
-        <video id="video-player" controls autoplay playsinline></video>
+        <div id="player"></div>
         <div id="logo-overlay">
             <img src="https://img5.pic.in.th/file/secure-sv1/11zon_resized-3bb1f59abd215d288.png" alt="Logo">
         </div>
@@ -269,69 +268,73 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', initApp);
+        // เริ่มต้น JWPlayer
+        var playerInstance = jwplayer("player");
 
-        function initApp() {
-            shaka.polyfill.installAll();
-            if (shaka.Player.isBrowserSupported()) {
-                initPlayer();
-            } else {
-                console.error('Browser not supported!');
-            }
-        }
-
-        function initPlayer() {
-            var video = document.getElementById('video-player');
-            window.player = new shaka.Player(video);
-
-            window.player.addEventListener('error', function(event) {
-                console.error('Error code', event.detail.code, 'object', event.detail);
-            });
-
-            // เปิดมาเจอช่อง 5HD
-            changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/5/5.mpd', '87db4361f7894655a4656e9c8b935a02', 'b025a4b950df41158a87cfc8d6f2ac34');
-        }
-
+        // ฟังก์ชันเปลี่ยนช่อง โดยตรวจสอบว่ามี DRM Key ไหม
         function changeChannel(file, keyId, key) {
-            if (!window.player) return;
-
+            
             // ตั้งค่าพื้นฐานสำหรับ Source
-            var config = {
-                drm: { clearKeys: {} }
+            var sourceConfig = {
+                file: file,
+                type: "dash"
             };
 
             // ถ้ามีการส่ง keyId และ key มาด้วย แสดงว่าเป็นช่องที่เข้ารหัส (DRM)
             if (keyId && key) {
-                config.drm.clearKeys[keyId] = key;
+                sourceConfig.drm = {
+                    clearkey: {
+                        keyId: keyId,
+                        key: key
+                    }
+                };
             }
 
-            window.player.configure(config);
-
             // โหลดช่องใหม่
-            window.player.load(file).then(function() {
-                var video = document.getElementById('video-player');
-                video.play().catch(function(e) {
-                    console.log('Autoplay prevented', e);
-                });
+            playerInstance.load([sourceConfig]);
+            playerInstance.play();
 
-                // แสดง Logo
-                var logoOverlay = document.getElementById('logo-overlay');
-                logoOverlay.style.display = 'block';
-                
-                setTimeout(() => {
-                    logoOverlay.style.opacity = '0.7';
-                }, 10);
+            // แสดง Logo
+            var logoOverlay = document.getElementById('logo-overlay');
+            logoOverlay.style.display = 'block';
+            
+            // ใช้ setTimeout เล็กน้อยเพื่อให้ display: block ทำงานก่อนเริ่ม transition opacity
+            setTimeout(() => {
+                logoOverlay.style.opacity = '0.7';
+            }, 10);
 
+            // ตั้งเวลาซ่อน Logo หลังจาก 5 วินาที
+            setTimeout(() => {
+                logoOverlay.style.opacity = '0';
+                // รอให้ CSS Transition จบลงก่อนที่จะเปลี่ยน display เป็น none
                 setTimeout(() => {
-                    logoOverlay.style.opacity = '0';
-                    setTimeout(() => {
-                        logoOverlay.style.display = 'none';
-                    }, 500);
-                }, 5000);
-            }).catch(function(e) {
-                console.error('Error loading video', e);
-            });
+                    logoOverlay.style.display = 'none';
+                }, 500);
+            }, 5000);
         }
+
+        // ตั้งค่า Player เริ่มต้น (เปิดมาเจอช่อง 5HD)
+        playerInstance.setup({
+            playlist: [{
+                sources: [
+                    {
+                        type: "dash",
+                        file: 'https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/5/5.mpd',
+                        drm: {
+                            clearkey: {
+                                keyId: "87db4361f7894655a4656e9c8b935a02",
+                                key: "b025a4b950df41158a87cfc8d6f2ac34"
+                            }
+                        },
+                        label: "1080HD"
+                    }
+                ]
+            }],
+            width: "100%",
+            aspectratio: "16:9",
+            autostart: true,
+            mute: false // สามารถตั้ง true เพื่อให้เล่นอัตโนมัติบน Browser สมัยใหม่ได้ลื่นไหลขึ้น
+        });
     </script>
 </body>
 </html>
