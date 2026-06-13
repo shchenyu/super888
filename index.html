@@ -8,11 +8,9 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>FreeTV555</title>
+    <title>FreeTV</title>
 
     
-
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap" rel="stylesheet">
 
     <script src="https://ssl.p.jwpcdn.com/player/v/8.26.0/jwplayer.js"></script>
 
@@ -48,7 +46,7 @@
 
             min-height: 100vh;
 
-            font-family: 'Kanit', Tahoma, sans-serif; /* เปลี่ยนมาใช้ Kanit */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
         }
 
@@ -79,6 +77,44 @@
 
 
         #player { width: 100%; }
+
+
+
+        #logo-overlay {
+
+            position: absolute;
+
+            top: 15px;
+
+            right: 15px;
+
+            width: 35px; 
+
+            height: 35px;
+
+            opacity: 0;
+
+            transition: opacity 0.5s ease-in-out;
+
+            pointer-events: none;
+
+            z-index: 10;
+
+            display: none;
+
+        }
+
+
+
+        #logo-overlay img {
+
+            width: 100%;
+
+            height: 100%;
+
+            object-fit: contain;
+
+        }
 
 
 
@@ -116,9 +152,7 @@
 
             font-size: 14px;
 
-            font-weight: 500;
-
-            font-family: 'Kanit', sans-serif;
+            font-weight: bold;
 
             transition: all 0.3s ease;
 
@@ -172,13 +206,13 @@
 
             background-color: #1a1a1a;
 
-            padding: 10px 4px;
+            padding: 2px;
 
             border-radius: 10px;
 
             cursor: pointer;
 
-            transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            transition: transform 0.2s ease, background-color 0.2s ease;
 
             display: flex;
 
@@ -201,22 +235,6 @@
             background-color: #2a2a2a;
 
             border-color: #555;
-
-        }
-
-
-
-        /* 💡 เพิ่ม Class สำหรับช่องที่กำลังเล่นอยู่ (เรืองแสง) */
-
-        .channel.active {
-
-            transform: scale(1.05);
-
-            background-color: #1a1a1a;
-
-            border-color: #fff;
-
-            box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
 
         }
 
@@ -248,13 +266,9 @@
 
             color: #eee;
 
-            margin-top: 4px;
+            margin-top: 8px;
 
-            margin-bottom: 1px;  
-
-            font-size: 13px;
-
-            font-weight: 300;
+            font-size: 12px;
 
             white-space: nowrap;
 
@@ -263,8 +277,6 @@
             text-overflow: ellipsis;
 
             width: 100%;
-
-            max-width: 90px;
 
         }
 
@@ -282,7 +294,7 @@
 
             color: #888;
 
-            font-size: 13px;
+            font-size: 12px;
 
         }
 
@@ -306,13 +318,7 @@
 
             }
 
-            .channel-name { 
-
-                font-size: 11px; 
-
-                max-width: 50px; 
-
-            }
+            .channel-name { font-size: 10px; }
 
             .category-btn { padding: 8px 20px; font-size: 12px; }
 
@@ -329,6 +335,12 @@
     <div id="player-container">
 
         <div id="player"></div>
+
+        <div id="logo-overlay">
+
+            <img src="https://img5.pic.in.th/file/secure-sv1/11zon_resized-3bb1f59abd215d288.png" alt="Logo">
+
+        </div>
 
     </div>
 
@@ -396,11 +408,11 @@
 
         </div>
 
-        <div class="channel" data-category="tv" onclick="changeChannel('https://cco-streamer1.cdn.3bbtv.com:8443/3bb/live/18/18.mpd', '678bbba596584ad895d2923fb0255e82','c55471086c824112b217743a31abdf8f')">
+        <div class="channel" data-category="tv" onclick="changeChannel('https://cri-streamer3.cdn.3bbtv.com:8443/3bb/live/18/18.mpd', '333de6034a1d45fe91c829539caf1149','2710efc048ca44bba4c2b57397989a26')">
 
             <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE//channelicon/JKN18.png" alt="JKN18">
 
-            <div class="channel-name">JKN188</div>
+            <div class="channel-name">JKN18</div>
 
         </div>
 
@@ -516,7 +528,7 @@
 
         </div>
 
-        <div class="channel" data-category="tv" onclick="changeChannel('https://cnt1-streamer9.cdn.3bbtv.com:8443/3bb/live/103/103.mpd', '9c5735afb4fd402580360aed8364469c','128d55d9ac2b47ad85f86b5d08320179')">
+        <div class="channel" data-category="tv" onclick="changeChannel('https://cco-streamer1.cdn.3bbtv.com:8443/3bb/live/103/103.mpd', '9c5735afb4fd402580360aed8364469c','128d55d9ac2b47ad85f86b5d08320179')">
 
             <img src="https://ais-s.ais-vidnt.com/ais/play/origin/LIVE//channelicon/R_0148.png" alt="HBO HD">
 
@@ -606,9 +618,7 @@
 
         </div>
 
-        
-
-        <div class="channel" data-category="sports" onclick="changeChannel('https://max01.mquanggiu290.workers.dev/chunks/max01_720.m3u8?token=' + generateToken('Max01'))">
+        <div class="channel" data-category="sports" onclick="changeChannel('https://max01.mquanggiu290.workers.dev/chunks/max01_720.m3u8?token=' + generateMax01Token())">
 
             <img src="https://placehold.co/100x100/333/FFF?text=MAX01" alt="Max01">
 
@@ -616,7 +626,7 @@
 
         </div>
 
-        <div class="channel" data-category="sports" onclick="changeChannel('https://max02.mquanggiu290.workers.dev/chunks/max02_720.m3u8?token=' + generateToken('Max02'))">
+        <div class="channel" data-category="sports" onclick="changeChannel('https://max02.mquanggiu290.workers.dev/chunks/max02_720.m3u8?token=' + generateMax02Token())">
 
             <img src="https://placehold.co/100x100/333/FFF?text=MAX02" alt="Max02">
 
@@ -624,15 +634,15 @@
 
         </div>
 
-        <div class="channel" data-category="sports" onclick="changeChannel('https://bein1.mquanggiu290.workers.dev/chunks/bein1_720.m3u8?token=' + generateToken('Bein1'))">
+        <div class="channel" data-category="sports" onclick="changeChannel('https://bein1.mquanggiu290.workers.dev/chunks/bein1_720.m3u8?token=' + generateBein1Token())">
 
-            <img src="https://cms.dmpcdn.com/livetv/2023/07/24/5f3c5240-29cc-11ee-b2f4-e9de482d866e_webp_original.webp" alt="BeIN 1">
+            <img src="https://images.streamx-web.org/images/tv/png/epl-bein1.png" alt="BeIN 1">
 
             <div class="channel-name">BeIN 1</div>
 
         </div>
 
-        <div class="channel" data-category="sports" onclick="changeChannel('https://bein2.mquanggiu290.workers.dev/chunks/bein2_720.m3u8?token=' + generateToken('Bein2'))">
+        <div class="channel" data-category="sports" onclick="changeChannel('https://bein2.mquanggiu290.workers.dev/chunks/bein2_720.m3u8?token=' + generateBein2Token())">
 
             <img src="https://cms.dmpcdn.com/livetv/2023/07/24/5f346300-29cc-11ee-b2f4-e9de482d866e_webp_original.webp" alt="BeIN 2">
 
@@ -640,187 +650,11 @@
 
         </div>
 
-        <div class="channel" data-category="sports" onclick="changeChannel('https://bein3.mquanggiu290.workers.dev/chunks/bein3_720.m3u8?token=' + generateToken('Bein3'))">
+        <div class="channel" data-category="sports" onclick="changeChannel('https://bein3.mquanggiu290.workers.dev/chunks/bein3_720.m3u8?token=' + generateBein3Token())">
 
             <img src="https://cms.dmpcdn.com/livetv/2023/07/24/5fda18e0-29cc-11ee-846b-a1c4e5181c87_webp_original.webp" alt="BeIN 3">
 
             <div class="channel-name">BeIN 3</div>
-
-        </div>
-
-        <div class="channel" data-category="sports" onclick="changeChannel('https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/7janu55dwc/out/v1/69a2a7041395406b970598f61680e7cf/cenc.mpd', 'e51aa21f2a0fef9aabc120dfb655b52f', 'a12a987fe725a40b6be95cd84b15f689')">
-
-            <img src="https://i.imgur.com/eRFE0jZ.png" alt="TSN 1">
-
-            <div class="channel-name">TSN 1</div>
-
-        </div>
-
-
-
-        <div class="channel" data-category="sports" onclick="changeChannel('https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/3n6slkgh54/out/v1/8977baf175da4b94873194613dd3fe55/cenc.mpd', 'daa8ea92553fd16cd6bfae2b8c582715', '4042e041b5639b79b69ae07a872eef9b')">
-
-            <img src="https://i.ibb.co/fzHfwF5j/TSN2.png" alt="TSN 2">
-
-            <div class="channel-name">TSN 2</div>
-
-        </div>
-
-
-
-        <div class="channel" data-category="sports" onclick="changeChannel('https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/lzhmuzmjsl/out/v1/c171eeb214c749f2b351c79df317b21e/cenc.mpd', 'f5c2b30eac11be1e8cdfc9585f5fe6af', 'a8198d17bf9b0da77450fbb919a38b2d')">
-
-            <img src="https://i.imgur.com/AYza8KO.png" alt="TSN 3">
-
-            <div class="channel-name">TSN 3</div>
-
-        </div>
-
-
-
-        <div class="channel" data-category="sports" onclick="changeChannel('https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/h9urpo3cwb/out/v1/fde190f369484bc6b6117cc16cd82a9f/cenc.mpd', 'c4088f5f265f9de50cffd80bf89308b7', '2c4d2239d96d532b4ec2050653611003')">
-
-            <img src="https://i.imgur.com/qJyAWU8.png" alt="TSN 4">
-
-            <div class="channel-name">TSN 4</div>
-
-        </div>
-
-
-
-        <div class="channel" data-category="sports" onclick="changeChannel('https://otte.cache.aiv-cdn.net/bom-nitro/clients/dash/enc/jkcljgqbx8/out/v1/63bfa701559340f3a2a2cb1fccd24807/cenc.mpd', 'e853333da2c9196ea11374634231bc45', 'de2e2dbe818d78dfad07d6cd9a4c63d4')">
-
-            <img src="https://i.imgur.com/HEzHpzz.png" alt="TSN 5">
-
-            <div class="channel-name">TSN 5</div>
-
-        </div>
-
-        <div class="channel" data-category="sports" onclick="changeChannel('https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/1080p-vtt/index.m3u8')">
-
-            <img src="https://i.ibb.co.com/9JJ04g9/1000284076.png" alt="Caze TV">
-
-            <div class="channel-name">Caze TV</div>
-
-        </div>
-
-
-
-        <div class="channel" data-category="sports" onclick="changeChannel('https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/Caze_TV.m3u8')">
-
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpFVJGATy70KVBZ0txjIVDSVXTQUCSykt_5A&s" alt="CAZE TV 1">
-
-            <div class="channel-name">CAZE TV 1</div>
-
-        </div>
-
-
-
-        <div class="channel" data-category="sports" onclick="changeChannel('https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/3ynrpdanq2/out/v1/81fd4c26584044d2b1a1cc5b32fa9af0/cenc.mpd?amznDtid=AOAGZA014O5RE&encoding=segmentBase', '34475edab991ad5e92548aebd710410a', '501b209cccd323ac00bf5ac15b406cb4')">
-
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpFVJGATy70KVBZ0txjIVDSVXTQUCSykt_5A&s" alt="CAZE TV 2">
-
-            <div class="channel-name">CAZE TV 2</div>
-
-        </div>
-
-
-
-        <div class="channel" data-category="sports" onclick="changeChannel('https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/epg9sw6owc/out/v1/e50aecefcb294fae85d6b343e0a6f1cc/cenc.mpd?amznDtid=AOAGZA014O5RE&encoding=segmentBase', '9752ef72590ef441ffa3731e0486fbc0', 'db63ec7b9f11348b7cc6808a54c99457')">
-
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpFVJGATy70KVBZ0txjIVDSVXTQUCSykt_5A&s" alt="CAZE TV 3">
-
-            <div class="channel-name">CAZE TV 3</div>
-
-        </div>
-
-
-
-        <div class="channel" data-category="sports" onclick="changeChannel('https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash-sd/enc/hubonmgf5k/out/v1/10560d92577e4917973aa4624124ecd6/cenc-sd.mpd', '45bbd582f220f438f896450d8306a3f2', '582c6ba7f64bbc0f2d91c6b0c265760c')">
-
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/DSports_logo_2022.svg/960px-DSports_logo_2022.svg.png?_=20240702054322" alt="DSPORTS">
-
-            <div class="channel-name">DSPORTS</div>
-
-        </div>
-
-
-
-        <div class="channel" data-category="sports" onclick="changeChannel('https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash-sd/enc/kp7qfx2tly/out/v1/bbfb730b45b74d4ea875d75786ea3f13/cenc-sd.mpd', '8afa490e1640be969729fb459182e4ec', '6f129820cdd5b6978a98c604c72cf05b')">
-
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/DSports_logo_2022.svg/960px-DSports_logo_2022.svg.png?_=20240702054322" alt="DSPORTS+">
-
-            <div class="channel-name">DSPORTS+</div>
-
-        </div>
-
-
-
-        <div class="channel" data-category="sports" onclick="changeChannel('https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash-sd/enc/hufm7lgnhx/out/v1/5045630288d44123ba85427b2c36f29f/cenc-sd.mpd', '18044a84b7e6c1bbf852591797e53a2c', '38b3b6f8810917d89636927bddb79294')">
-
-            <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/DSports2.png" alt="DSPORTS 2">
-
-            <div class="channel-name">DSPORTS 2</div>
-
-        </div>
-
-
-
-        <div class="channel" data-category="sports" onclick="changeChannel('https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash-sd/enc/1a5vdd4i8j/out/v1/db14823b937045ac8b2b0effbcdded45/cenc-sd.mpd', '5f096c1f9e243b31ddc3bf4f5d88fc5f', '27334536d6077737b321c64663ebf59d')">
-
-            <img src="https://i.imgur.com/oT5CAvd.png" alt="TUDN">
-
-            <div class="channel-name">TUDN</div>
-
-        </div>
-
-        
-
-        <div class="channel" data-category="sports" onclick="changeChannel('https://ott-balancer.tvri.go.id/live/eds/SportHD/hls/SportHD.m3u8')">
-
-            <img src="https://football-tribe.com/indonesia/wp-content/uploads/sites/10/2019/01/TVRI-Sport-HD.png" alt="TVRI SPORT">
-
-            <div class="channel-name">TVRI SPORT</div>
-
-        </div>
-
-
-
-        <div class="channel" data-category="sports" onclick="changeChannel('http://starhub.pro/live/farhat-3379/67897-913379/3420.ts')">
-
-            <img src="https://i.ibb.co.com/JFScp4g2/1000284128.png" alt="Fox Sports 1">
-
-            <div class="channel-name">Fox Sports 1</div>
-
-        </div>
-
-
-
-        <div class="channel" data-category="sports" onclick="changeChannel('http://starhub.pro/live/farhat-3379/67897-913379/3421.ts')">
-
-            <img src="https://i.ibb.co.com/CpxyjYHH/1000284129.png" alt="Fox Sports 2">
-
-            <div class="channel-name">Fox Sports 2</div>
-
-        </div>
-
-
-
-        <div class="channel" data-category="sports" onclick="changeChannel('https://testt.mquanggiu290.workers.dev/live.m3u8')">
-
-            <img src="https://i.ibb.co/k6KQwhFN/1000284104.png" alt="Unite8 Sports 1">
-
-            <div class="channel-name">Unite8 Sports 111</div>
-
-        </div>
-
-
-
-        <div class="channel" data-category="sports" onclick="changeChannel('http://starhub.pro/live/farhat-3379/67897-913379/98841.ts')">
-
-            <img src="https://i.ibb.co/S4DXyQkZ/1000284105.png" alt="Unite8 Sports 2">
-
-            <div class="channel-name">Unite8 Sports 2</div>
 
         </div>
 
@@ -878,49 +712,73 @@
 
 
 
-        // 💡 ระบบจัดการตอนคลิกเลือกช่อง (Click Listener) เพื่อสลับแสงเงา
-
-        document.querySelectorAll('.channel').forEach(channel => {
-
-            channel.addEventListener('click', function() {
-
-                // ลบสถานะ active ออกจากทุกช่อง
-
-                document.querySelectorAll('.channel').forEach(c => c.classList.remove('active'));
-
-                // เพิ่มสถานะ active ให้ช่องที่ถูกคลิก
-
-                this.classList.add('active');
-
-            });
-
-        });
-
-
-
         document.addEventListener('DOMContentLoaded', () => {
 
             filterCategory('tv');
 
-            
-
-            // 💡 ตั้งค่าให้ช่อง 5HD เรืองแสงเป็นค่าเริ่มต้น
-
-            const firstChannel = document.querySelector('.channel');
-
-            if (firstChannel) {
-
-                firstChannel.classList.add('active');
-
-            }
-
         });
 
 
 
-        function generateToken(channelName) {
+        function generateMax01Token() {
 
-            var salt = "AutoRandom" + channelName + "_Salt"; 
+            var salt = "AutoRandomMax01_Salt"; 
+
+            var currentHour = Math.floor(Date.now() / 3600000);
+
+            var rawToken = salt + "_" + currentHour;
+
+            return btoa(rawToken).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+
+        }
+
+
+
+        function generateMax02Token() {
+
+            var salt = "AutoRandomMax02_Salt"; 
+
+            var currentHour = Math.floor(Date.now() / 3600000);
+
+            var rawToken = salt + "_" + currentHour;
+
+            return btoa(rawToken).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+
+        }
+
+
+
+        function generateBein1Token() {
+
+            var salt = "AutoRandomBein1_Salt"; 
+
+            var currentHour = Math.floor(Date.now() / 3600000);
+
+            var rawToken = salt + "_" + currentHour;
+
+            return btoa(rawToken).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+
+        }
+
+
+
+        function generateBein2Token() {
+
+            var salt = "AutoRandomBein2_Salt"; 
+
+            var currentHour = Math.floor(Date.now() / 3600000);
+
+            var rawToken = salt + "_" + currentHour;
+
+            return btoa(rawToken).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+
+        }
+
+        
+
+        function generateBein3Token() {
+
+            var salt = "AutoRandomBein3_Salt"; 
 
             var currentHour = Math.floor(Date.now() / 3600000);
 
@@ -937,6 +795,8 @@
 
 
         function changeChannel(file, keyId, key) {
+
+            
 
             var streamType = file.includes('.mpd') ? 'dash' : 'hls';
 
@@ -973,6 +833,34 @@
             playerInstance.load([sourceConfig]);
 
             playerInstance.play();
+
+
+
+            var logoOverlay = document.getElementById('logo-overlay');
+
+            logoOverlay.style.display = 'block';
+
+            
+
+            setTimeout(() => {
+
+                logoOverlay.style.opacity = '0.7';
+
+            }, 10);
+
+
+
+            setTimeout(() => {
+
+                logoOverlay.style.opacity = '0';
+
+                setTimeout(() => {
+
+                    logoOverlay.style.display = 'none';
+
+                }, 500);
+
+            }, 5000);
 
         }
 
