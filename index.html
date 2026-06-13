@@ -343,7 +343,7 @@
             <div class="channel-name">Unite8 Sports 1</div>
         </div>
         <div class="channel" data-category="sports" onclick="changeChannel('https://stream-proxy.shchenyu8810.workers.dev/?url=' + encodeURIComponent('http://starhub.pro/live/farhat-3379/67897-913379/98841.ts'))">
-            <img src="https://i.ibb.co/S4DXyQkZ/1000284105.png" alt="Unite8 Sports 2">
+            <img src="https://i.ibb.co.com/S4DXyQkZ/1000284105.png" alt="Unite8 Sports 2">
             <div class="channel-name">Unite8 Sports 2</div>
         </div>
 
@@ -387,16 +387,21 @@
         
         var playerInstance = jwplayer("player");
 
-        // อัปเดตฟังก์ชัน โหลดช่องให้รองรับ .ts
+        // อัปเดตฟังก์ชัน โหลดช่องให้รองรับ .ts บังคับเล่นเป็น mp4
         function changeChannel(file, keyId, key) {
             
-            // เช็คว่าไฟล์ที่เข้ามาเป็น .mpd, .ts หรืออื่นๆ (m3u8)
-            var streamType = file.includes('.mpd') ? 'dash' : file.includes('.ts') ? 'mp4' : 'hls';
+            // ตรวจสอบนามสกุลไฟล์
+            var streamType = file.includes('.mpd') ? 'dash' : (file.includes('.ts') ? 'mp4' : 'hls');
 
             var sourceConfig = {
                 file: file,
                 type: streamType
             };
+
+            // ถ้าเป็นไฟล์ .ts ให้ปิดระบบ Preload เพื่อให้เล่นตรงๆ ไม่ติดบั๊ก Buffer
+            if (streamType === 'mp4') {
+                sourceConfig.preload = "none";
+            }
 
             if (keyId && key) {
                 sourceConfig.drm = {
