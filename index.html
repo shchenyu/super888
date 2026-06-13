@@ -5,13 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FreeTV</title>
     
-    <!-- Scripts -->
     <script src="//ssl.p.jwpcdn.com/player/v/8.26.0/jwplayer.js"></script>
     <script>
         jwplayer.key = 'XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo';
     </script>
-    <script defer data-domain="kitti2025.tiiny.site" src="https://analytics.tiiny.site/js/plausible.js"></script>
-    <script type="text/javascript" src="https://tiiny.host/ad-script.js"></script>
 
     <style>
         * {
@@ -34,11 +31,11 @@
             width: 100%;
             max-width: 800px;
             background-color: #111;
-            padding: 0; /* เอา padding ออกเพื่อให้ video ชิดขอบ */
+            padding: 0;
             border-radius: 12px;
             position: relative;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
-            overflow: hidden; /* ให้มุมโค้งของ container ครอบวิดีโอ */
+            overflow: hidden;
             margin-bottom: 20px;
         }
 
@@ -52,9 +49,9 @@
             right: 15px;
             width: 35px; 
             height: 35px;
-            opacity: 0; /* เริ่มต้นด้วยซ่อนไว้ */
+            opacity: 0;
             transition: opacity 0.5s ease-in-out;
-            pointer-events: none; /* ป้องกันไม่ให้โลโก้บังการกดปุ่มบนวิดีโอ */
+            pointer-events: none;
             z-index: 10;
             display: none;
         }
@@ -67,7 +64,6 @@
 
         .channel-grid {
             display: grid;
-            /* ปรับจำนวนคอลัมน์อัตโนมัติ ตามขนาดหน้าจอ */
             grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
             gap: 12px;
             width: 100%;
@@ -111,7 +107,16 @@
             width: 100%;
         }
 
-        /* ปรับแต่งสำหรับมือถือจอเล็ก */
+        /* โค้ด CSS สำหรับข้อความเครดิต */
+        .footer-credit {
+            margin-top: auto; /* ดันข้อความไปล่างสุดเสมอ */
+            padding: 30px 10px 10px 10px;
+            text-align: center;
+            width: 100%;
+            color: #888; /* สีเทาเข้ม ไม่แย่งซีนวิดีโอ */
+            font-size: 12px;
+        }
+
         @media (max-width: 480px) {
             .channel-grid {
                 grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
@@ -267,20 +272,20 @@
         </div>
     </div>
 
+    <div class="footer-credit">
+        © 2026 FreeTV | Developed by [ชื่อของคุณ]
+    </div>
+
     <script>
-        // เริ่มต้น JWPlayer
         var playerInstance = jwplayer("player");
 
-        // ฟังก์ชันเปลี่ยนช่อง โดยตรวจสอบว่ามี DRM Key ไหม
         function changeChannel(file, keyId, key) {
             
-            // ตั้งค่าพื้นฐานสำหรับ Source
             var sourceConfig = {
                 file: file,
                 type: "dash"
             };
 
-            // ถ้ามีการส่ง keyId และ key มาด้วย แสดงว่าเป็นช่องที่เข้ารหัส (DRM)
             if (keyId && key) {
                 sourceConfig.drm = {
                     clearkey: {
@@ -290,30 +295,24 @@
                 };
             }
 
-            // โหลดช่องใหม่
             playerInstance.load([sourceConfig]);
             playerInstance.play();
 
-            // แสดง Logo
             var logoOverlay = document.getElementById('logo-overlay');
             logoOverlay.style.display = 'block';
             
-            // ใช้ setTimeout เล็กน้อยเพื่อให้ display: block ทำงานก่อนเริ่ม transition opacity
             setTimeout(() => {
                 logoOverlay.style.opacity = '0.7';
             }, 10);
 
-            // ตั้งเวลาซ่อน Logo หลังจาก 5 วินาที
             setTimeout(() => {
                 logoOverlay.style.opacity = '0';
-                // รอให้ CSS Transition จบลงก่อนที่จะเปลี่ยน display เป็น none
                 setTimeout(() => {
                     logoOverlay.style.display = 'none';
                 }, 500);
             }, 5000);
         }
 
-        // ตั้งค่า Player เริ่มต้น (เปิดมาเจอช่อง 5HD)
         playerInstance.setup({
             playlist: [{
                 sources: [
@@ -333,7 +332,7 @@
             width: "100%",
             aspectratio: "16:9",
             autostart: true,
-            mute: false // สามารถตั้ง true เพื่อให้เล่นอัตโนมัติบน Browser สมัยใหม่ได้ลื่นไหลขึ้น
+            mute: false
         });
     </script>
 </body>
