@@ -5,15 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FreeTV</title>
     
-    <script src="//ssl.p.jwpcdn.com/player/v/8.26.0/jwplayer.js"></script>
+    <script src="https://ssl.p.jwpcdn.com/player/v/8.26.0/jwplayer.js"></script>
     <script>
         jwplayer.key = 'XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo';
     </script>
 
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
         
         body {
             margin: 0;
@@ -39,9 +37,7 @@
             margin-bottom: 20px;
         }
 
-        #player {
-            width: 100%;
-        }
+        #player { width: 100%; }
 
         #logo-overlay {
             position: absolute;
@@ -62,7 +58,6 @@
             object-fit: contain;
         }
 
-        /* ----- สไตล์สำหรับหมวดหมู่ (Tabs) ----- */
         .category-tabs {
             display: flex;
             justify-content: center;
@@ -89,14 +84,12 @@
             color: #ddd;
         }
 
-        /* สไตล์ปุ่มที่ถูกเลือก: เน้นแค่ขอบเรืองแสง ไม่มีพื้นหลังสีแดง */
         .category-btn.active {
             background-color: #1a1a1a;
             color: #fff;
-            border-color: #fff; /* ขอบสีขาว */
-            box-shadow: 0 0 12px rgba(255, 255, 255, 0.4); /* เอฟเฟกต์เรืองแสง */
+            border-color: #fff; 
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.4); 
         }
-        /* ------------------------------------ */
 
         .channel-grid {
             display: grid;
@@ -126,7 +119,6 @@
             border-color: #555;
         }
 
-        /* ซ่อนช่องเมื่อไม่ได้อยู่ในหมวดหมู่ที่เลือก */
         .channel.hidden {
             display: none !important;
         }
@@ -166,13 +158,8 @@
                 width: 35px;
                 height: 35px;
             }
-            .channel-name {
-                font-size: 10px;
-            }
-            .category-btn {
-                padding: 8px 20px;
-                font-size: 12px;
-            }
+            .channel-name { font-size: 10px; }
+            .category-btn { padding: 8px 20px; font-size: 12px; }
         }
     </style>
 </head>
@@ -341,25 +328,19 @@
     </div>
 
     <script>
-        // ฟังก์ชันสำหรับกรองหมวดหมู่
+        // แก้ไขบั๊กระบบกรองหมวดหมู่ให้เสถียรและปลอดภัยขึ้น
         function filterCategory(category) {
-            // ดึงปุ่มหมวดหมู่ทั้งหมดและลบคลาส active
             const buttons = document.querySelectorAll('.category-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
 
-            // เพิ่มคลาส active ให้ปุ่มที่เพิ่งถูกกด (อ้างอิงจาก event)
-            if(event && event.target) {
-                event.target.classList.add('active');
-            } else {
-                // กรณีรันตอนโหลดหน้าเว็บ
-                document.querySelector('.category-btn[onclick="filterCategory(\'' + category + '\')"]').classList.add('active');
+            // ใช้การค้นหาปุ่มที่มี onclick ตรงกับ category แทนการใช้ event.target
+            const targetBtn = document.querySelector(`.category-btn[onclick="filterCategory('${category}')"]`);
+            if(targetBtn) {
+                targetBtn.classList.add('active');
             }
 
-            // ดึงช่องทั้งหมด
             const channels = document.querySelectorAll('.channel');
-            
             channels.forEach(channel => {
-                // ถ้าหมวดหมู่ตรงกับที่กด ให้แสดง ถ้าไม่ตรงให้ซ่อน
                 if (channel.getAttribute('data-category') === category) {
                     channel.classList.remove('hidden');
                 } else {
@@ -373,7 +354,7 @@
             filterCategory('tv');
         });
 
-        // ฟังก์ชันสร้าง Token สำหรับ Max01
+        // ฟังก์ชันสร้าง Token
         function generateMax01Token() {
             var salt = "AutoRandomMax01_Salt"; 
             var currentHour = Math.floor(Date.now() / 3600000);
@@ -381,7 +362,6 @@
             return btoa(rawToken).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
         }
 
-        // ฟังก์ชันสร้าง Token สำหรับ Max02
         function generateMax02Token() {
             var salt = "AutoRandomMax02_Salt"; 
             var currentHour = Math.floor(Date.now() / 3600000);
@@ -389,7 +369,6 @@
             return btoa(rawToken).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
         }
 
-    // ฟังก์ชันสร้าง Token สำหรับ BeIN 1
         function generateBein1Token() {
             var salt = "AutoRandomBein1_Salt"; 
             var currentHour = Math.floor(Date.now() / 3600000);
@@ -397,10 +376,8 @@
             return btoa(rawToken).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
         }
 
-        // เริ่มต้น JWPlayer
         var playerInstance = jwplayer("player");
 
-        // ฟังก์ชันเปลี่ยนช่อง โดยตรวจสอบว่ามี DRM Key ไหม
         function changeChannel(file, keyId, key) {
             
             var streamType = file.includes('.mpd') ? 'dash' : 'hls';
@@ -437,7 +414,6 @@
             }, 5000);
         }
 
-        // ตั้งค่า Player เริ่มต้น (เปิดมาเจอช่อง 5HD)
         playerInstance.setup({
             playlist: [{
                 sources: [
